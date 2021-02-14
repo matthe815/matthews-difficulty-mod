@@ -9,7 +9,7 @@ Looking for a spriter who'd be willing to volunteer their time to making better 
 Matthe815's Difficulty Mod is a recreation and revamp of the old Tough as Nails concept.
 Using ideas such as thirst from Tough as Nails, Matthe815's Difficulty Mod creates a splash of difficulty into your Minecraft Experience.
 
-##Some of the features include:
+## Some of the features include:
 
 Body Temperature, with complete and automatic support for custom biomes
 Thirst, with default support for Harvestcraft, and support for additional custom items
@@ -21,7 +21,7 @@ Using my experience in developing addons for Tough As Nails, I'm integrating all
 into this mod by default. Including the native harvestcraft compatiblity for thirst.
 This mod will continue to be updated for as long as possible, and I'm very receptive to suggestion!
 
-##FAQ:
+## FAQ:
 
 **Can I use this with Extra TAN?:**
 
