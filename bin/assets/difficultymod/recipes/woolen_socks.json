@@ -1,0 +1,23 @@
+{ 
+    "type": "minecraft:crafting_shaped",
+    "pattern":
+    [
+        "   ",
+        " ",
+        "w w"
+    ],
+    "key":
+    {
+        "w":
+        {
+            "item": "minecraft:wool",
+            "data": 32767
+        }
+    },
+
+    "result": 
+    {
+      "item": "difficultymod:wool_socks",
+      "count": 1
+    }
+  }

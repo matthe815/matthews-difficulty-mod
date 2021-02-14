@@ -1,0 +1,7 @@
+﻿# イテーム
+item.difficultymod.emptyFlask.name=水筒
+item.difficultymod.waterFilledFlask.name=フル水筒
+item.difficultymod.appleJuice.name=リンゴジュース
+
+# クリァテヴ・タブ
+itemGroup.difficultymod.drinks=「Difficulty Mod」の飲み物

@@ -1,0 +1,66 @@
+﻿# Items
+item.difficultymod.emptyFlask.name=空烧瓶
+item.difficultymod.waterFilledFlask.name=盛满的烧瓶
+item.difficultymod.appleJuice.name=苹果汁
+item.difficultymod.cactusJuice.name=仙人掌汁
+item.difficultymod.orangeJuice.name=橙子汁
+item.difficultymod.lemonade.name=柠檬汁
+item.difficultymod.emptycanteen.name=空水壶
+item.difficultymod.filledcanteen.name=盛满的水壶
+item.difficultymod.cleanFlask.name=洁净的水
+
+# Items - Armor
+item.difficultymod.woolHelm.name=毛线帽
+item.difficultymod.woolChest.name=毛线衣
+item.difficultymod.woolLeggings.name=毛线裤
+item.difficultymod.woolBoots.name=毛线鞋
+item.difficultyMod.woolSocks.name=毛线袜
+
+item.difficultymod.wetHelm.name=雨帽
+item.difficultymod.wetChest.name=雨衣
+
+# Creative Tabs
+itemGroup.difficultymod.drinks=困难模式消耗品
+
+# Items - Potions
+potion.effect.temperature_resistance=耐温药水
+potion.effect.temperature_immunity=恒温药水
+potion.effect.staminaless=乏力药水
+potion.effect.stamina=活力药水
+
+# Items - Splash Potions
+splash_potion.effect.temperature_resistance=喷溅型耐温药水
+splash_potion.effect.temperature_immunity=喷溅型恒温药水
+splash_potion.effect.staminaless=喷溅型乏力药水
+splash_potion.effect.stamina=喷溅型活力药水
+
+# Items - Lingering Potions
+lingering_potion.effect.temperature_resistance=滞留型耐温药水
+lingering_potion.effect.temperature_immunity=滞留型恒温药水
+lingering_potion.effect.staminaless=滞留型乏力药水
+lingering_potion.effect.stamina=滞留型活力药水
+
+# Items - Tipped Arrows
+tipped_arrow.effect.temperature_resistance=耐温之箭
+tipped_arrow.effect.temperature_immunity=恒温之箭
+tipped_arrow.effect.staminaless=乏力之箭
+tipped_arrow.effect.stamina=活力之箭
+
+# Potion
+potion.chilled=寒冷
+potion.steaming=炎热
+potion.hypothermia=发冷
+potion.hyperthermia=发热
+potion.quenched=淬火
+potion.staminaless=乏力
+potion.stamina=活力
+potion.temperature_immunity=耐温
+potion.temperature_resistance=恒温
+
+# Enchantments
+enchantment.heat_resistance=炎热保护
+enchantment.cold_resistance=寒冷保护
+
+# Enchantment Descriptions
+enchantment.difficultymod.heat_resistance.desc=防止你的体温高于正常温度，即使是在最热的时候。
+enchantment.difficultymod.cold_resistance.desc=防止你的体温低于正常温度，即使是在最冷的时候。

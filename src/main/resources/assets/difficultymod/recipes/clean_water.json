@@ -1,0 +1,19 @@
+{ 
+    "type": "minecraft:crafting_shapeless",
+    "ingredients":
+    [
+        {
+            "item": "difficultymod:flask_with_hot_water"
+        },
+        
+        {
+            "item": "minecraft:ice"
+        }
+    ],
+
+    "result": 
+    {
+      "item": "difficultymod:clean_water",
+      "count": 1
+    }
+  }
