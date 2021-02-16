@@ -58,7 +58,6 @@ minecraft {
 }
 
 dependencies {
-    provided "lieutenant:lieutenant:${config.lieutenant_version}"
     provided "sereneseasons:sereneseasons:${config.sereneseasons_version}"
     provided "pamsharvestcraft:pamsharvestcraft:${config.harvestcraft_version}"
 }
