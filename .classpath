@@ -66,8 +66,8 @@
 	<classpathentry kind="lib" path="C:/Users/matth/.gradle/caches/minecraft/deobfedDeps/compileDummy.jar"/>
 	<classpathentry kind="lib" path="C:/Users/matth/.gradle/caches/minecraft/deobfedDeps/providedDummy.jar"/>
 	<classpathentry kind="lib" path="C:/Users/matth/.gradle/caches/minecraft/net/minecraftforge/forge/1.12.2-14.23.5.2768/start"/>
-	<classpathentry kind="lib" path="C:/Users/matth/.gradle/caches/minecraft/deobfedDeps/lieutenant/lieutenant/1.6/lieutenant-1.6.jar" sourcepath="C:/Users/matth/.gradle/caches/minecraft/deobfedDeps/lieutenant/lieutenant/1.6/lieutenant-1.6-sources.jar"/>
 	<classpathentry kind="lib" path="C:/Users/matth/.gradle/caches/modules-2/files-2.1/io.sentry/sentry/1.7.30/e0bc8a2462727d45d6cf506f522218edb6d09452/sentry-1.7.30.jar"/>
 	<classpathentry kind="lib" path="C:/Users/matth/.gradle/caches/minecraft/deobfedDeps/sereneseasons/sereneseasons/1.2.18/sereneseasons-1.2.18.jar"/>
+	<classpathentry kind="lib" path="dependants/lieutenant-1.1.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
