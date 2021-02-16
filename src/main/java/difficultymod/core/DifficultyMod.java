@@ -44,9 +44,9 @@ public class DifficultyMod {
 	
 	private ItemStack waterBottle = new ItemStack(Items.POTIONITEM, 1, 0);
 	
-	public static ArmorMaterial wool_material = EnumHelper.addArmorMaterial("wool", "difficultymod:wool", 115, new int[] {1, 2, 1, 1}, 20, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 2F);
-	public static ArmorMaterial wet_material = EnumHelper.addArmorMaterial("wet", "difficultymod:wet", 95, new int[] {1, 1, 1, 1}, 25, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 1F);
-	public static ArmorMaterial temp_material = EnumHelper.addArmorMaterial("temp", "difficultymod:temp", 240, new int[] {1, 3, 1, 1}, 20, SoundEvents.ITEM_ARMOR_EQUIP_CHAIN, 1.5F);
+	public static ArmorMaterial wool_material = EnumHelper.addArmorMaterial("wool", "difficultymod:wool", 115, new int[] {1, 2, 1, 1}, 20, null, 2F);
+	public static ArmorMaterial wet_material = EnumHelper.addArmorMaterial("wet", "difficultymod:wet", 95, new int[] {1, 1, 1, 1}, 25, null, 1F);
+	public static ArmorMaterial temp_material = EnumHelper.addArmorMaterial("temp", "difficultymod:temp", 240, new int[] {1, 3, 1, 1}, 20, null, 1.5F);
 	public static HeatResistanceEnchantment heat_resistance = new HeatResistanceEnchantment();
 	public static ColdResistanceEnchantment cold_resistance = new ColdResistanceEnchantment();
 	
