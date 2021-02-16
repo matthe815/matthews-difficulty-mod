@@ -1,17 +1,17 @@
 package difficultymod.api.gui;
 
-import difficultymod.gui.handlers.ThirstHandler;
+import difficultymod.gui.handlers.GUIController;
 
 public class GUIHelper {
 	public void GUISetCancelled(DifficultyModGUI type, boolean cancelled)
 	{
 		switch (type) {
 			case THIRST:
-				ThirstHandler.thirstCanceled = cancelled;
+				GUIController.thirstCanceled = cancelled;
 			break;
 			
 			case HUNGER:
-				ThirstHandler.hungerCanceled = cancelled;
+				GUIController.hungerCanceled = cancelled;
 			break;
 		}
 	}

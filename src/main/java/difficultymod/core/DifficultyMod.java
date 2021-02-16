@@ -1,7 +1,7 @@
 package difficultymod.core;
 
-import difficultymod.gui.handlers.TemperatureHandler;
-import difficultymod.gui.handlers.ThirstHandler;
+import difficultymod.gui.handlers.GUIController;
+import difficultymod.gui.handlers.GUIController;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
@@ -86,8 +86,8 @@ public class DifficultyMod {
 		
 		if (event.getSide() == Side.CLIENT) {
 			MinecraftForge.EVENT_BUS.register(new HUDHandler());	
-			MinecraftForge.EVENT_BUS.register(new ThirstHandler());	
-			MinecraftForge.EVENT_BUS.register(new TemperatureHandler());	
+			MinecraftForge.EVENT_BUS.register(new GUIController());	
+			MinecraftForge.EVENT_BUS.register(new GUIController());	
 		}
 		
 		LootFunctionManager.registerFunction(new Serializer<ApplyRandomTempProt>(new ResourceLocation("difficultymod:apply_random_temp_prot"), ApplyRandomTempProt.class) {
