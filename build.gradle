@@ -58,8 +58,6 @@ minecraft {
 }
 
 dependencies {
-    provided "sereneseasons:sereneseasons:${config.sereneseasons_version}"
-    provided "pamsharvestcraft:pamsharvestcraft:${config.harvestcraft_version}"
 }
 
 processResources {
