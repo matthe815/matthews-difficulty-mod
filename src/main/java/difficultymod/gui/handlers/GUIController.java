@@ -2,15 +2,13 @@ package difficultymod.gui.handlers;
 
 import java.util.Random;
 
-import difficultymod.api.temperature.TempHelper;
 import difficultymod.core.ConfigHandler;
 import difficultymod.temperature.ITemp;
+import difficultymod.temperature.Temp;
 import difficultymod.temperature.TempProvider;
-import difficultymod.temperature.Temperature;
 import difficultymod.thirst.Thirst;
 import difficultymod.thirst.ThirstProvider;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -19,7 +17,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.EnumDifficulty;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
@@ -39,12 +36,15 @@ public class GUIController {
     public static boolean   hungerCanceled = false;
     public static boolean   thirstCanceled = false;
     protected int           offset;
+	private static final 
+		ResourceLocation    VIGNETTE_TEX_PATH = new ResourceLocation("difficultymod:textures/misc/vignette.png");
     
     private int updateCounter;
     
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event)
     {
+    	// When every frame ends, it should increment the update counter, this is used for randomization.
         if (event.phase == Phase.END && !minecraft.isGamePaused())
             updateCounter++;
     }
@@ -57,28 +57,20 @@ public class GUIController {
 		///
 		Minecraft      mc         = Minecraft.getMinecraft();
 		EntityPlayer   player     = mc.player;
-		EnumDifficulty difficulty = minecraft.world.getDifficulty();
-		
+        
 		if (event.getType() != ElementType.ALL)
 			return;
 		
+        minecraft.getTextureManager().bindTexture(OVERLAY); // Bind the textures related to the overlay.
+        
 		if (!ConfigHandler.common.temperatureSettings.disableTemperature)
-			DrawTemperature();
+			drawTemperature((Temp)player.getCapability(TempProvider.TEMPERATURE, null), mc, event.getResolution());
 		
 		if (!ConfigHandler.common.thirstSettings.disableThirst)
-			DrawThirst();
+			drawSurvivalStats(event, player);
 		
-		// Apply the relative right height to create bar offsets.
-		offset = GuiIngameForge.right_height;
-		
-		if (event.isCanceled())
-			return;
-		
-		ScaledResolution scale = event.getResolution();
-		
-		drawTemperature(player.getCapability(TempProvider.TEMPERATURE, null), mc, 0, 0, 1, scale);
 
-		TempHelper.GetPlayer(player);
+	    minecraft.getTextureManager().bindTexture(Gui.ICONS); // Rebind the Minecraft textures.
 	}
 	
 	/**
@@ -86,7 +78,7 @@ public class GUIController {
 	 * @param event  The render event of which called this.
 	 * @param player The player of which this event was called on.
 	 */
-	private void DrawThirst(RenderGameOverlayEvent.Pre event, EntityPlayer player)
+	private void drawSurvivalStats(RenderGameOverlayEvent.Pre event, EntityPlayer player)
 	{
 		///
 		/// The relative screen resolution, including monitor width and height.
@@ -94,89 +86,78 @@ public class GUIController {
         ScaledResolution resolution = event.getResolution();
         int              width      = resolution.getScaledWidth();
         int              height     = resolution.getScaledHeight();
-		
-        minecraft.getTextureManager().bindTexture(OVERLAY); // Bind the textures related to the overlay.
+        Thirst           thirst     = (Thirst)player.getCapability(ThirstProvider.THIRST, null);
         
-		if (event.getType() == ElementType.FOOD && !ConfigHandler.client.useOldGUI) {
+		if (event.getType().equals(ElementType.FOOD) && !ConfigHandler.client.useOldGUI) {
 			event.setCanceled(true);
-			
-		    drawHunger(width, height+4, player.getFoodStats().getFoodLevel(), player.getFoodStats().getSaturationLevel());
-		    minecraft.getTextureManager().bindTexture(Gui.ICONS);
+		    createGUIChunkBar(width, height+4, 0, 36, player.getFoodStats().getFoodLevel(), player.getFoodStats().getSaturationLevel(), 20);
 		}
 		
 		if (event.getType() != ElementType.AIR)
 				return;
 		
-        minecraft.getTextureManager().bindTexture(OVERLAY);
-        Thirst thirst = (Thirst)player.getCapability(ThirstProvider.THIRST, null);
-        drawThirst(width+(!ConfigHandler.client.useOldGUI ? 10 : 0), height+5, thirst.GetThirst(), thirst.GetHydration(), thirst.GetMaxThirst());
-	    minecraft.getTextureManager().bindTexture(Gui.ICONS);
-	    
-    	GuiIngameForge.right_height += 10;
+        createGUIChunkBar(width+(!ConfigHandler.client.useOldGUI ? 10 : 0), height+5, 0, 9, thirst.GetThirst(), thirst.GetHydration(), thirst.GetMaxThirst());
+    	GuiIngameForge.right_height += 10; // Increment the right height.
 	}
-    
-    private void drawThirst(int width, int height, int thirstLevel, float thirstHydrationLevel, float maxThirst)
-    {
-    	if (GUIController.thirstCanceled)
-    		return;
-    	
-        int left = width / 2 + 91;
-        int top = height - GuiIngameForge.right_height;
-        
-        for (int i = 0; i < (maxThirst/2); i++)
-        {
-            int dropletHalf = i * 2 + 1;
-            int iconIndex = 0;
-            int backgroundOffset = 0;
-            int startX = (left - i * 8) - 10;
-            int startY = top-6;
-            
-            int textureX = ConfigHandler.client.useOldGUI ? 24 : 16;
-            
-            if (thirstHydrationLevel <= 0.0F && updateCounter % (thirstLevel * 3 + 1) == 0)
+	
+	/**
+	 * Create a chunk-based GUI bar. Exactly like the heart bar, or vanilla hunger bar.
+	 * @param width The X position on the display for the bar.
+	 * @param height The Y position on the display for the bar.
+	 * @param textureX The texture-offset in the X direction.
+	 * @param textureY The texture-offset in the Y direction.
+	 * @param current The current value of the chunk bar.
+	 * @param max The maximum value of the chunk bar.
+	 */
+	private void createGUIChunkBar(int x, int y, int textureX, int textureY, int current, float saturation, int max)
+	{
+		// Determine the left and top positions.
+		int left = x / 2 + 91,
+			top  = y - GuiIngameForge.right_height;
+		
+		// Begin rendering each individual nugget.
+		for (int i = 0; i < (max/2); i++) {
+			int dropletHalf = i*2+1; // The amount necessary to render a half nugget.
+			
+			///
+			/// Control icon and texture renderer.
+			///
+			int iconIndex        = 0,
+				backgroundOffset = 0,
+				startX           = (left - i * 8) - 10,                      // Determine where to draw the next nugget.
+				startY           = top-6;                                    // Determines the Y position to align the texture, is also used for empty animations.
+		
+            if (saturation <= 0.0F && updateCounter % (current * 3 + 1) == 0) // Dynamically render "drain-capable" animation.
                 startY = startY + (random.nextInt(3) - 1);
             
-            minecraft.ingameGUI.drawTexturedModalRect(startX, startY, backgroundOffset, textureX, 9, 9);
-            
-            if (thirstLevel >= dropletHalf)
-            	minecraft.ingameGUI.drawTexturedModalRect(startX, startY, (iconIndex + (thirstLevel == dropletHalf ? 5 : 4)) * 9, textureX, 9, 9);
-        }
-    }
-    
-    private void drawHunger(int width, int height, int thirstLevel, float thirstHydrationLevel)
-    {
-    	if (GUIController.hungerCanceled)
-    		return;
-    	
-        int left = width / 2 + 91;
-        int top = height - GuiIngameForge.right_height;
-        
-        for (int i = 0; i < 10; i++)
-        {
-            int dropletHalf = i * 2 + 1;
-            int iconIndex = 0;
-            int backgroundOffset = 0;
-            int startX = left - i * 8 - 9;
-            int startY = top;
-            
-            if (thirstHydrationLevel <= 0.0F && updateCounter % (thirstLevel * 3 + 1) == 0)
-                startY = top + (random.nextInt(3) - 1);
-            
-            minecraft.ingameGUI.drawTexturedModalRect(startX, startY, backgroundOffset, 44, 9, 9);
-            minecraft.ingameGUI.drawTexturedModalRect(startX, startY, (iconIndex + thirstLevel > dropletHalf ? 4 : 5) * 9, 44, 9, 9);
-        }
-    }
-  
-	
-	public static void drawTemperature (ITemp temperature, Minecraft mc, int left, int top, float alpha, ScaledResolution scale)
-	{
-		if (temperature.GetTemperature(mc.player) == Temperature.FREEZING)
-			renderVignette(mc, scale, 0, 0, 255);
-		else if (temperature.GetTemperature(mc.player) == Temperature.BURNING)
-			renderVignette(mc, scale, 255, 0, 0);
+			minecraft.ingameGUI.drawTexturedModalRect(startX, startY, backgroundOffset, textureY, 9, 9); // Draw the image background.
+			
+			if (current >= dropletHalf) // If there's enough to make atleast a half droplet, render a droplet.
+            	minecraft.ingameGUI.drawTexturedModalRect(startX, startY, (iconIndex + (current == dropletHalf ? 5 : 4)) * 9, textureY, 9, 9);
+		}
 	}
-	
-	private static final ResourceLocation VIGNETTE_TEX_PATH = new ResourceLocation("difficultymod:textures/misc/vignette.png");
+  
+	/**
+	 * Render any necessary vignettes to the screen, representing heat-stroke or freezing to death.
+	 * @param temperature
+	 * @param mc
+	 * @param scale
+	 */
+	public static void drawTemperature (ITemp temperature, Minecraft mc, ScaledResolution scale)
+	{
+		switch (temperature.GetTemperature(mc.player)) {
+		case FREEZING:
+			renderVignette(mc, scale, 0, 0, 255);
+			break;
+			
+		case BURNING:
+			renderVignette(mc, scale, 255, 0, 0);
+			break;
+			
+		default:
+			break;
+		}
+	}
 	
 	private static void renderVignette(Minecraft mc, ScaledResolution scaledRes, float r, float g, float b) {
 		GlStateManager.disableDepth();
