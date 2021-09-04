@@ -3,7 +3,7 @@ package difficultymod.core.init;
 import difficultymod.items.Items.*;
 import difficultymod.core.ConfigHandler;
 import difficultymod.creativetabs.CreativeTabHandler;
-import difficultymod.items.BaseDrinkableItem;
+import difficultymod.items.DrinkableItem;
 import lieutenant.registry.RegisterHandler;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -14,16 +14,16 @@ public class ItemCore {
 	{
 		AddItems(new Item[] {
 				//Juices
-				new BaseDrinkableItem("appleJuice", "apple_juice", -1, CreativeTabHandler.DifficultyModTab, 7),
-				new BaseDrinkableItem("cactusJuice", "cactus_juice", -1, CreativeTabHandler.DifficultyModTab, 4),
-				new BaseDrinkableItem("carrotJuice", "carrot_juice", -1, CreativeTabHandler.DifficultyModTab, 6),
-				new BaseDrinkableItem("goldenCarrotJuice", "golden_carrot_juice", -1, CreativeTabHandler.DifficultyModTab, 8),
-				new BaseDrinkableItem("goldenAppleJuice", "golden_apple_juice", -1, CreativeTabHandler.DifficultyModTab, 10),
-				new BaseDrinkableItem("chorusFruitJuice", "chorus_fruit_juice", -1, CreativeTabHandler.DifficultyModTab, 6),
-				new BaseDrinkableItem("melonJuice", "melon_juice", -1, CreativeTabHandler.DifficultyModTab, 6),
-				new BaseDrinkableItem("beetrootJuice", "beetroot_juice", -1, CreativeTabHandler.DifficultyModTab, 7),
-				new BaseDrinkableItem("pumpkinJuice", "pumpkin_juice", -1, CreativeTabHandler.DifficultyModTab, 5),
-				new BaseDrinkableItem("glisteringMelonJuice", "glistering_melon_juice", -1, CreativeTabHandler.DifficultyModTab, 8),
+				new DrinkableItem("appleJuice", "apple_juice", -1, CreativeTabHandler.DifficultyModTab, 7),
+				new DrinkableItem("cactusJuice", "cactus_juice", -1, CreativeTabHandler.DifficultyModTab, 4),
+				new DrinkableItem("carrotJuice", "carrot_juice", -1, CreativeTabHandler.DifficultyModTab, 6),
+				new DrinkableItem("goldenCarrotJuice", "golden_carrot_juice", -1, CreativeTabHandler.DifficultyModTab, 8),
+				new DrinkableItem("goldenAppleJuice", "golden_apple_juice", -1, CreativeTabHandler.DifficultyModTab, 10),
+				new DrinkableItem("chorusFruitJuice", "chorus_fruit_juice", -1, CreativeTabHandler.DifficultyModTab, 6),
+				new DrinkableItem("melonJuice", "melon_juice", -1, CreativeTabHandler.DifficultyModTab, 6),
+				new DrinkableItem("beetrootJuice", "beetroot_juice", -1, CreativeTabHandler.DifficultyModTab, 7),
+				new DrinkableItem("pumpkinJuice", "pumpkin_juice", -1, CreativeTabHandler.DifficultyModTab, 5),
+				new DrinkableItem("glisteringMelonJuice", "glistering_melon_juice", -1, CreativeTabHandler.DifficultyModTab, 8),
 				new CleanWaterFlask(),
 				new EmptyCanteen(),
 				new EmptyCanteen2(),

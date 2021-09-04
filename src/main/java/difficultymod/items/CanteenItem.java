@@ -3,16 +3,14 @@ package difficultymod.items;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class BaseCanteen extends BaseDrinkableItem 
+public class CanteenItem extends DrinkableItem 
 {
-	public BaseCanteen(String name, String registryName, int maxCapacity, int temperature, CreativeTabs creativeTab)
+	public CanteenItem(String name, CreativeTabs creativeTab)
 	{
-		super(name, registryName, temperature, creativeTab);
-		this.setMaxDamage(maxCapacity);
+		super(name, creativeTab);
 	}
 	
 	@Override
@@ -22,24 +20,14 @@ public class BaseCanteen extends BaseDrinkableItem
 		
 		EntityPlayer player = (EntityPlayer)entity;
 		
-		if (player.isCreative())
-			return stack;
+		// If in creative mode, don't actually apply durability effects.
+		if (player.isCreative()) return stack;
 		
 		stack.setItemDamage(stack.getItemDamage()+1);
 		
-		if (stack.getItemDamage()==stack.getMaxDamage()) {
-			switch (stack.getItem().getRegistryName().toString()) {
-			
-			case "difficultymod:canteen1":
-				stack = new ItemStack(Item.getByNameOrId("difficultymod:empty_canteen"));
-				break;
-				
-			case "difficultymod:canteen2":
-				stack = new ItemStack(Item.getByNameOrId("difficultymod:empty_canteen2"));
-				break;
-				
-			}
-		}
+		// If the item is fully consumed, change back into empty.
+		if (stack.getItemDamage()==stack.getMaxDamage())
+			return GetConsumedItem();
 			
 		return stack;
 	}

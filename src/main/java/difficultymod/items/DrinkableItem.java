@@ -5,51 +5,26 @@ import difficultymod.core.ConfigHandler;
 import difficultymod.core.DifficultyMod;
 import difficultymod.core.init.PotionInit;
 import difficultymod.thirst.IThirst;
+import lieutenant.registry.RegisterHandler;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBucketMilk;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 
-public class BaseDrinkableItem extends ItemBucketMilk {
+public class DrinkableItem extends ItemBucketMilk implements IBottledConsumable {
 
-	protected int tempModifier;
-	private int thirst;
-	protected String name;
-	public Item emptyVersion;
-	
-	public BaseDrinkableItem(String name, String registryName, int temperature, CreativeTabs creativeTab)
+	public DrinkableItem(String name, CreativeTabs creativeTab)
 	{
-		this.name = name;
-		this.tempModifier = temperature;
-		
 		setUnlocalizedName(DifficultyMod.MODID + "." + name)
-			.setRegistryName(registryName)
+			.setRegistryName(name)
 			.setCreativeTab(creativeTab);
 		
 		setMaxDamage(5);
-		this.thirst = 3;
-		
-		this.tempModifier = temperature;
-	}
-	
-	public BaseDrinkableItem(String name, String registryName, int temperature, CreativeTabs creativeTab, int thirst)
-	{
-		this.name = name;
-		this.tempModifier = temperature;
-		
-		setUnlocalizedName(DifficultyMod.MODID + "." + name)
-			.setRegistryName(registryName)
-			.setCreativeTab(creativeTab);
-		
-		setMaxDamage(5);
-		this.thirst = thirst;
-		
-		this.tempModifier = temperature;
+		RegisterHandler.AddItem(this);
 	}
 	
 	@Override
@@ -71,21 +46,34 @@ public class BaseDrinkableItem extends ItemBucketMilk {
 	public ItemStack onItemUseFinish(ItemStack stack, World world, EntityLivingBase entity)
 	{
 		super.onItemUseFinish(stack, world, entity);
+		
+		// Cast and store the player and their thirst level.
 		EntityPlayer player = (EntityPlayer)entity;
+		IThirst      thirst = ThirstHelper.GetPlayer(player);
 		
-		if (player.isCreative())
-			return stack;
+		thirst.AddStats(GetThirstModifier(), GetThirstModifier()/2);
 		
-		IThirst th = ThirstHelper.GetPlayer(player);
-		
-		th.SetThirst((th.GetThirst()+thirst) > 20 ? 20 : (th.GetThirst() + thirst));
-		th.SetHydration((th.GetHydration()+thirst) > 20 ? 20 : th.GetHydration() + thirst/2);
-		
-		if (th.GetThirst() >= 19 && ConfigHandler.common.thirstSettings.wellFedEffect)
+		// If the player has a sufficient amount of thirst, and the effect enabled, apply quenched.
+		if (thirst.GetThirst() >= 16 && ConfigHandler.common.thirstSettings.wellFedEffect)
 			player.addPotionEffect(new PotionEffect(PotionInit.THIRSTQUENCHED, 1500, 1));
 		
-		ItemStack iStack = new ItemStack(Item.getByNameOrId("minecraft:glass_bottle"));
+		ItemStack iStack = GetConsumedItem();
 		iStack.setItemDamage(stack.getItemDamage());
-		return iStack;
+		return player.isCreative() ? stack : iStack;
+	}
+
+	@Override
+	public int GetThirstModifier() {
+		return 0;
+	}
+
+	@Override
+	public ItemStack GetConsumedItem() {
+		return null;
+	}
+
+	@Override
+	public int GetTemperatureModifier() {
+		return 0;
 	}
 }

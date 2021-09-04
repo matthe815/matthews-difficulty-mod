@@ -2,12 +2,12 @@ package difficultymod.items.Items;
 
 import java.util.List;
 
-import difficultymod.items.BaseDrinkableItem;
+import difficultymod.items.DrinkableItem;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class WaterFilledFlask extends BaseDrinkableItem 
+public class WaterFilledFlask extends DrinkableItem 
 {
 	
 	public WaterFilledFlask() 

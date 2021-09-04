@@ -19,7 +19,7 @@ public abstract class TemperatureArmor extends ItemArmor {
 	public abstract boolean IsDrenchable();
 	
 	public TemperatureArmor(ArmorMaterial material, int so, EntityEquipmentSlot slot) {
-		super(DifficultyMod.wool_material, so, EntityEquipmentSlot.CHEST);
+		super(DifficultyMod.wool_material, so, slot);
 	}
 
 }

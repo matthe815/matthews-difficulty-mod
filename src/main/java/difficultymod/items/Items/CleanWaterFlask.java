@@ -1,14 +1,14 @@
 package difficultymod.items.Items;
 
 import difficultymod.creativetabs.CreativeTabHandler;
-import difficultymod.items.BaseDrinkableItem;
+import difficultymod.items.DrinkableItem;
 
-public class CleanWaterFlask extends BaseDrinkableItem 
+public class CleanWaterFlask extends DrinkableItem 
 {
 	
 	public CleanWaterFlask() 
 	{
-		super("cleanFlask", "clean_water", -1, CreativeTabHandler.DifficultyModTab);
+		super("cleanFlask", CreativeTabHandler.DifficultyModTab);
 	}
 	
 }
