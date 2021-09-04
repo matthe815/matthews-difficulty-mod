@@ -2,6 +2,7 @@ package difficultymod.items;
 
 import difficultymod.core.ConfigHandler;
 import difficultymod.core.DifficultyMod;
+import lieutenant.registry.RegisterHandler;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBucket;
@@ -15,12 +16,15 @@ import net.minecraft.world.World;
 public class BaseItemBucket extends ItemBucket 
 {
 	
-	public BaseItemBucket(String name, String registryName, CreativeTabs creativeTab)
+	public BaseItemBucket(String name, CreativeTabs creativeTab)
 	{
 		super(null);
-		this.setUnlocalizedName(DifficultyMod.MODID + "." + name);
-		setRegistryName(registryName);
-		setCreativeTab(creativeTab);
+		
+		setUnlocalizedName(DifficultyMod.MODID + "." + name)
+			.setRegistryName(name)
+			.setCreativeTab(creativeTab);
+		
+		RegisterHandler.AddItem(this);
 	}
 	
 	@Override

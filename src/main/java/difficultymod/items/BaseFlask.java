@@ -1,8 +1,7 @@
-package difficultymod.items.Items;
+package difficultymod.items;
 
-import difficultymod.creativetabs.CreativeTabHandler;
-import difficultymod.items.BaseItemBucket;
 import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -16,14 +15,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
-public class EmptyCanteen extends BaseItemBucket 
-{
-	
-	public EmptyCanteen() 
-	{
-		super("emptycanteen", CreativeTabHandler.DifficultyModTab);
+public class BaseFlask extends BaseItem implements IBottledConsumable, ITemperatureConvertable {
+
+	public BaseFlask(String name, CreativeTabs creativeTab) {
+		super(name, creativeTab);
 	}
-	
+
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		RayTraceResult result = this.rayTrace(worldIn, playerIn, true); 
@@ -44,7 +41,51 @@ public class EmptyCanteen extends BaseItemBucket
 		// Play a bottle filling sound.
 		playerIn.playSound(new SoundEvent(new ResourceLocation("minecraft:item.bottle.fill")), 1f, 1f);
 		
+		ItemStack newstack = new ItemStack(GetNeutralItem());
+		float blockTemp = worldIn.getBiome(pos).getTemperature(pos);
+		
+		// Convert the returned item stack according to surrounding and block temperature.
+		if (blockTemp < 0.2f) newstack = new ItemStack(GetColdItem());
+		else if (blockTemp > 0.85f) newstack = new ItemStack(GetWarmItem());
+		
 		super.onItemRightClick(worldIn, playerIn, handIn);
-		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, new ItemStack(Item.getByNameOrId("difficultymod:canteen1")));
+		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, newstack);
 	}
+	
+	@Override
+	public int GetThirstModifier() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int GetTemperatureModifier() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public ItemStack GetConsumedItem() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Item GetWarmItem() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Item GetColdItem() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Item GetNeutralItem() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
