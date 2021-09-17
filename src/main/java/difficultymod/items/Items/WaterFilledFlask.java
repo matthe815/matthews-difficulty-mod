@@ -12,7 +12,7 @@ public class WaterFilledFlask extends DrinkableItem
 	
 	public WaterFilledFlask() 
 	{
-		super("waterFilledFlask", "filled_flask", -1, null);
+		super("waterFilledFlask", null);
 	}
 	
 	@Override

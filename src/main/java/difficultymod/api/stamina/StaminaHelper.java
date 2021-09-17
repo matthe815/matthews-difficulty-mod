@@ -1,7 +1,8 @@
 package difficultymod.api.stamina;
 
+import difficultymod.capabilities.stamina.StaminaCapability;
+import difficultymod.capabilities.stamina.StaminaProvider;
 import difficultymod.core.ConfigHandler;
-import difficultymod.stamina.*;
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
@@ -16,9 +17,9 @@ public class StaminaHelper
 	 * @param player
 	 * @return
 	 */
-    public static IStamina GetPlayer(EntityPlayer player)
+    public static StaminaCapability GetPlayer(EntityPlayer player)
     {
-        return player.getCapability(StaminaProvider.STAMINA, null);
+        return (StaminaCapability)player.getCapability(StaminaProvider.STAMINA, null);
     }
     
     /**

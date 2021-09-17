@@ -13,8 +13,7 @@ public class BaseItem extends Item
 		{
 			setUnlocalizedName(DifficultyMod.MODID + "." + name)
 				.setRegistryName(name)
-				.setCreativeTab(creativeTab)
-				.setMaxDamage(5);
+				.setCreativeTab(creativeTab);
 			
 			RegisterHandler.AddItem(this);
 		}

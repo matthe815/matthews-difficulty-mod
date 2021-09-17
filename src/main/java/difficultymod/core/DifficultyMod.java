@@ -1,7 +1,6 @@
 package difficultymod.core;
 
 import difficultymod.gui.handlers.GUIController;
-import difficultymod.gui.handlers.GUIController;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
@@ -13,7 +12,6 @@ import extratan.enchantments.HeatResistanceEnchantment;
 import extratan.gui.handlers.*;
 import extratan.lootfunctions.ApplyRandomTempProt;
 import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.item.ItemStack;
@@ -47,6 +45,7 @@ public class DifficultyMod {
 	public static ArmorMaterial wool_material = EnumHelper.addArmorMaterial("wool", "difficultymod:wool", 115, new int[] {1, 2, 1, 1}, 20, null, 2F);
 	public static ArmorMaterial wet_material = EnumHelper.addArmorMaterial("wet", "difficultymod:wet", 95, new int[] {1, 1, 1, 1}, 25, null, 1F);
 	public static ArmorMaterial temp_material = EnumHelper.addArmorMaterial("temp", "difficultymod:temp", 240, new int[] {1, 3, 1, 1}, 20, null, 1.5F);
+	
 	public static HeatResistanceEnchantment heat_resistance = new HeatResistanceEnchantment();
 	public static ColdResistanceEnchantment cold_resistance = new ColdResistanceEnchantment();
 	
@@ -59,7 +58,6 @@ public class DifficultyMod {
 		
 	    network = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
 
-	    ItemCore.init();
 	    CapabilityCore.init();
 	    EventCore.init();
 	    NetworkCore.init(network, event.getSide());
@@ -85,9 +83,9 @@ public class DifficultyMod {
 
 		
 		if (event.getSide() == Side.CLIENT) {
+			System.out.println("Initialize GUI");
 			MinecraftForge.EVENT_BUS.register(new HUDHandler());	
-			MinecraftForge.EVENT_BUS.register(new GUIController());	
-			MinecraftForge.EVENT_BUS.register(new GUIController());	
+			MinecraftForge.EVENT_BUS.register(new GUIController());
 		}
 		
 		LootFunctionManager.registerFunction(new Serializer<ApplyRandomTempProt>(new ResourceLocation("difficultymod:apply_random_temp_prot"), ApplyRandomTempProt.class) {

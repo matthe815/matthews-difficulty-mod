@@ -2,7 +2,8 @@ package difficultymod.events;
 
 import difficultymod.api.thirst.Drink;
 import difficultymod.api.thirst.ThirstHelper;
-import difficultymod.thirst.IThirst;
+import difficultymod.capabilities.thirst.Thirst;
+import difficultymod.capabilities.thirst.ThirstCapability;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBucketMilk;
 import net.minecraft.item.ItemPotion;
@@ -25,9 +26,9 @@ public class DrinkEvents
 		if (!(item.getItem() instanceof ItemBucketMilk || item.getItem() instanceof ItemPotion)) // Only allow this to go through if it's a drinkable item.
 			return;
 		
-		IThirst th = ThirstHelper.GetPlayer(player);
+		ThirstCapability thirst = ThirstHelper.GetPlayer(player);
 		Drink drink = ThirstHelper.GetDrink(item.getItem().getRegistryName());
 		
-		th.SetThirst(th.GetThirst()+(drink != null ? drink.GetThirstValue() : 3)); // Restore thirst based on the item drank.
+		thirst.Add(new Thirst().SetThirst((drink != null ? drink.GetThirstValue() : 3))); // Restore thirst based on the item drank.
 	}
 }

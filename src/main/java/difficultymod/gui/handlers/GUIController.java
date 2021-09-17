@@ -2,12 +2,11 @@ package difficultymod.gui.handlers;
 
 import java.util.Random;
 
+import difficultymod.capabilities.temperature.TemperatureCapability;
+import difficultymod.capabilities.temperature.TemperatureProvider;
+import difficultymod.capabilities.thirst.ThirstCapability;
+import difficultymod.capabilities.thirst.ThirstProvider;
 import difficultymod.core.ConfigHandler;
-import difficultymod.temperature.ITemp;
-import difficultymod.temperature.Temp;
-import difficultymod.temperature.TempProvider;
-import difficultymod.thirst.Thirst;
-import difficultymod.thirst.ThirstProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
@@ -64,7 +63,7 @@ public class GUIController {
         minecraft.getTextureManager().bindTexture(OVERLAY); // Bind the textures related to the overlay.
         
 		if (!ConfigHandler.common.temperatureSettings.disableTemperature)
-			drawTemperature((Temp)player.getCapability(TempProvider.TEMPERATURE, null), mc, event.getResolution());
+			drawTemperature((TemperatureCapability)player.getCapability(TemperatureProvider.TEMPERATURE, null), mc, event.getResolution());
 		
 		if (!ConfigHandler.common.thirstSettings.disableThirst)
 			drawSurvivalStats(event, player);
@@ -86,7 +85,7 @@ public class GUIController {
         ScaledResolution resolution = event.getResolution();
         int              width      = resolution.getScaledWidth();
         int              height     = resolution.getScaledHeight();
-        Thirst           thirst     = (Thirst)player.getCapability(ThirstProvider.THIRST, null);
+        ThirstCapability           thirst     = (ThirstCapability)player.getCapability(ThirstProvider.THIRST, null);
         
 		if (event.getType().equals(ElementType.FOOD) && !ConfigHandler.client.useOldGUI) {
 			event.setCanceled(true);
@@ -96,7 +95,7 @@ public class GUIController {
 		if (event.getType() != ElementType.AIR)
 				return;
 		
-        createGUIChunkBar(width+(!ConfigHandler.client.useOldGUI ? 10 : 0), height+5, 0, 9, thirst.GetThirst(), thirst.GetHydration(), thirst.GetMaxThirst());
+        createGUIChunkBar(width+(!ConfigHandler.client.useOldGUI ? 10 : 0), height+5, 0, 9, thirst.Get().thirst, (float)thirst.Get().hydration, thirst.Get().GetMaxThirst());
     	GuiIngameForge.right_height += 10; // Increment the right height.
 	}
 	
@@ -143,9 +142,9 @@ public class GUIController {
 	 * @param mc
 	 * @param scale
 	 */
-	public static void drawTemperature (ITemp temperature, Minecraft mc, ScaledResolution scale)
+	public static void drawTemperature (TemperatureCapability temperature, Minecraft mc, ScaledResolution scale)
 	{
-		switch (temperature.GetTemperature(mc.player)) {
+		switch (temperature.Get()) {
 		case FREEZING:
 			renderVignette(mc, scale, 0, 0, 255);
 			break;

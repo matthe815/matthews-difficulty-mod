@@ -13,7 +13,7 @@ public class HotDrink extends DrinkableItem
 {
 	public HotDrink() 
 	{
-		super("hotDrink", "flask_with_hot_water", 4, CreativeTabHandler.DifficultyModTab);
+		super("hotDrink", CreativeTabHandler.DifficultyModTab);
 	}
 	
 	@Override

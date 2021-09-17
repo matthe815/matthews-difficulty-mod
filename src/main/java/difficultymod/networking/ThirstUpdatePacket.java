@@ -1,8 +1,9 @@
 package difficultymod.networking;
 
+import difficultymod.capabilities.thirst.Thirst;
+import difficultymod.capabilities.thirst.ThirstCapability;
+import difficultymod.capabilities.thirst.ThirstProvider;
 import difficultymod.core.ConfigHandler;
-import difficultymod.thirst.IThirst;
-import difficultymod.thirst.ThirstProvider;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -12,36 +13,31 @@ import net.minecraftforge.fml.relauncher.Side;
 
 public class ThirstUpdatePacket implements IMessage {
 
-	  private int currentThirst;
-	  private float currentHydration;
-	  private int currentMaxThirst;
+	  private int thirst;
+	  private double hydration;
 
-	  public ThirstUpdatePacket() {
-
-	  }
-
-	  public ThirstUpdatePacket(int current, float currentHy, int currentMT) 
+	  public ThirstUpdatePacket(Thirst thirst) 
 	  {
-		  System.out.println(current);
-		  this.currentThirst = current;
-		  this.currentHydration = currentHy;
-		  this.currentMaxThirst = currentMT;
+		  if (ConfigHandler.Debug_Options.showPacketMessages)
+			  System.out.println(thirst.thirst);
+		  
+		  this.thirst = thirst.thirst;
+		  this.hydration = thirst.hydration;
 	  }
 
 	  @Override
 	  public void fromBytes(ByteBuf buf) 
 	  {
-		  this.currentThirst = buf.readInt();
-		  this.currentHydration = buf.readFloat();
-		  this.currentMaxThirst = buf.readInt();
+		  this.thirst = buf.readInt();
+		  this.hydration = buf.readDouble();
 	  }
+		  
 
 	  @Override
 	  public void toBytes(ByteBuf buf) 
 	  {
-		  buf.writeInt(this.currentThirst);
-		  buf.writeFloat(this.currentHydration);
-		  buf.writeInt(this.currentMaxThirst);
+		  buf.writeInt(this.thirst);
+		  buf.writeDouble(this.hydration);
 	  }
 
 	  public static class Handler implements IMessageHandler<ThirstUpdatePacket, IMessage> {
@@ -52,14 +48,11 @@ public class ThirstUpdatePacket implements IMessage {
 	    		System.out.println("Got client thirst message.");
 	    	
 	    	if (ctx.side == Side.CLIENT) {
-	    		if (Minecraft.getMinecraft().player == null || !Minecraft.getMinecraft().player.hasCapability(ThirstProvider.THIRST, null))
+	    		if (Minecraft.getMinecraft().player == null)
 	    			return null;
 	    		
-	    		IThirst thirst = Minecraft.getMinecraft().player.getCapability(ThirstProvider.THIRST, null);
-	    		
-	    		thirst.SetThirst(message.currentThirst);
-	    		thirst.SetHydration(message.currentHydration);
-	    		thirst.SetMaxThirst(message.currentMaxThirst);
+	    		ThirstCapability thirst = (ThirstCapability)Minecraft.getMinecraft().player.getCapability(ThirstProvider.THIRST, null);
+	    		thirst.Set(new Thirst().SetThirst(message.thirst).SetHydration(message.hydration));
 	    	}
 	    		return null;
 	    }

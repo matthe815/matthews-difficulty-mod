@@ -1,7 +1,0 @@
-{
-    "parent": "item/generated",
-    "textures": {
-        "layer0": "difficultymod:items/glistering_melon_juice"
-    }
- 
-}

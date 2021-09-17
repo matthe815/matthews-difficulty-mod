@@ -1,10 +1,11 @@
 package difficultymod.items;
 
 import difficultymod.api.thirst.ThirstHelper;
+import difficultymod.capabilities.thirst.Thirst;
+import difficultymod.capabilities.thirst.ThirstCapability;
 import difficultymod.core.ConfigHandler;
 import difficultymod.core.DifficultyMod;
 import difficultymod.core.init.PotionInit;
-import difficultymod.thirst.IThirst;
 import lieutenant.registry.RegisterHandler;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
@@ -49,12 +50,12 @@ public class DrinkableItem extends ItemBucketMilk implements IBottledConsumable 
 		
 		// Cast and store the player and their thirst level.
 		EntityPlayer player = (EntityPlayer)entity;
-		IThirst      thirst = ThirstHelper.GetPlayer(player);
+		ThirstCapability thirst = ThirstHelper.GetPlayer(player);
 		
-		thirst.AddStats(GetThirstModifier(), GetThirstModifier()/2);
+		thirst.Add(new Thirst().SetThirst(GetThirstModifier()).SetHydration(GetThirstModifier()/2));
 		
 		// If the player has a sufficient amount of thirst, and the effect enabled, apply quenched.
-		if (thirst.GetThirst() >= 16 && ConfigHandler.common.thirstSettings.wellFedEffect)
+		if (thirst.Get().thirst >= 16 && ConfigHandler.common.thirstSettings.wellFedEffect)
 			player.addPotionEffect(new PotionEffect(PotionInit.THIRSTQUENCHED, 1500, 1));
 		
 		ItemStack iStack = GetConsumedItem();

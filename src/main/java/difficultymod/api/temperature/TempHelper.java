@@ -1,7 +1,7 @@
 package difficultymod.api.temperature;
 
-import difficultymod.temperature.ITemp;
-import difficultymod.temperature.TempProvider;
+import difficultymod.capabilities.temperature.TemperatureCapability;
+import difficultymod.capabilities.temperature.TemperatureProvider;
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
@@ -16,9 +16,9 @@ public class TempHelper
 	 * @param player
 	 * @return
 	 */
-    public static ITemp GetPlayer(EntityPlayer player)
+    public static TemperatureCapability GetPlayer(EntityPlayer player)
     {
-        return player.getCapability(TempProvider.TEMPERATURE, null);
+        return (TemperatureCapability)player.getCapability(TemperatureProvider.TEMPERATURE, null);
     }
     
     /**

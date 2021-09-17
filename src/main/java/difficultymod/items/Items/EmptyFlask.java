@@ -11,7 +11,7 @@ public class EmptyFlask extends BaseItem {
 	
 	public EmptyFlask()
 	{
-		super("emptyFlask", "empty_flask", null);
+		super("emptyFlask", null);
 	}
 	
 	@Override

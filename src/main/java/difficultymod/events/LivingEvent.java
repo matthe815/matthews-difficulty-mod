@@ -1,19 +1,20 @@
 package difficultymod.events;
 
 import difficultymod.api.stamina.ActionType;
+import difficultymod.capabilities.stamina.IStamina;
+import difficultymod.capabilities.stamina.StaminaCapability;
+import difficultymod.capabilities.stamina.StaminaProvider;
+import difficultymod.capabilities.temperature.TemperatureCapability;
+import difficultymod.capabilities.temperature.TemperatureProvider;
+import difficultymod.capabilities.temperature.Temperature;
+import difficultymod.capabilities.thirst.IThirst;
+import difficultymod.capabilities.thirst.ThirstCapability;
+import difficultymod.capabilities.thirst.ThirstProvider;
 import difficultymod.core.ConfigHandler;
 import difficultymod.core.DifficultyMod;
 import difficultymod.core.init.PotionInit;
 import difficultymod.networking.StaminaUpdatePacket;
-import difficultymod.networking.TemperatureUpdatePacket;
 import difficultymod.networking.ThirstUpdatePacket;
-import difficultymod.stamina.Stamina;
-import difficultymod.stamina.StaminaProvider;
-import difficultymod.temperature.Temp;
-import difficultymod.temperature.TempProvider;
-import difficultymod.temperature.Temperature;
-import difficultymod.thirst.Thirst;
-import difficultymod.thirst.ThirstProvider;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -76,54 +77,58 @@ public class LivingEvent {
 		
 		/* Register thirst processes in the case that it's enabled. */
 		if (!ConfigHandler.common.thirstSettings.disableThirst) {
-			Thirst thirst = (Thirst)event.player.getCapability(ThirstProvider.THIRST, null);
-			thirst.update(event.player, event.player.world, event.phase);
-			
-			if (thirst.HasChanged()) {
-				thirst.onSendClientUpdate();
-				DifficultyMod.network.sendTo(new ThirstUpdatePacket(thirst.GetThirst(), thirst.GetHydration(), thirst.GetMaxThirst()), (EntityPlayerMP) event.player);
+			if (event.player.hasCapability(ThirstProvider.THIRST, null)) 
+			{
+				ThirstCapability thirst = (ThirstCapability)event.player.getCapability(ThirstProvider.THIRST, null);
+				thirst.SetPlayer(event.player);
+				thirst.OnTick(event.phase);
+				
+				//if (thirst.HasChanged()) {
+				//	thirst.onSendClientUpdate();
+				//	DifficultyMod.network.sendTo(new ThirstUpdatePacket(thirst.Get()), (EntityPlayerMP) event.player);
+				//}
 			}
+
 		}
 		
 		/* Register stamina processes if it's enabled. */
 		if (!ConfigHandler.common.staminaSettings.disableStamina) {
-			Stamina stamina = (Stamina)event.player.getCapability(StaminaProvider.STAMINA, null);
-			stamina.update(event.player, event.player.world, event.phase);
-			
-			if (stamina.HasChanged()) {
-				stamina.onSendClientUpdate();
-				DifficultyMod.network.sendTo(new StaminaUpdatePacket(stamina.GetStamina()), (EntityPlayerMP) event.player);
+			if (event.player.hasCapability(StaminaProvider.STAMINA, null))
+			{
+				StaminaCapability stamina = (StaminaCapability)event.player.getCapability(StaminaProvider.STAMINA, null);
+				stamina.SetPlayer(event.player);
+				stamina.OnTick(event.phase);
+				
+				if (stamina.HasChanged()) {
+					stamina.onSendClientUpdate();
+				}	
 			}
 		}
 		
 		// Temperature triggers.
 		if (!ConfigHandler.common.temperatureSettings.disableTemperature) {
-			Temp temp = (Temp)event.player.getCapability(TempProvider.TEMPERATURE, null);
-			
-			temp.Update(); // Send an update tick.
-			temp.SetPlayer(event.player);
-			
-			if (temp.HasChanged()) {
-				temp.onSendClientUpdate();
-				temp.ResetTemperaturePoint();
-				DifficultyMod.network.sendTo(new TemperatureUpdatePacket(temp.GetTemperature(event.player).ordinal()), (EntityPlayerMP) event.player);
+			if (event.player.hasCapability(TemperatureProvider.TEMPERATURE, null)) {
+				TemperatureCapability temp = (TemperatureCapability)event.player.getCapability(TemperatureProvider.TEMPERATURE, null);
+				
+				temp.SetPlayer(event.player);
+				temp.Get(); // Send an update tick.
+				
+				if (temp.HasChanged()) {
+					temp.onSendClientUpdate();
+				}
+				
+				if (temp.Get() == Temperature.FREEZING && !event.player.isPotionActive(PotionInit.HYPOTHERMIA))
+					event.player.addPotionEffect(new PotionEffect(PotionInit.HYPOTHERMIA, ConfigHandler.common.temperatureSettings.climateDamageLength));
+				else if (temp.Get() == Temperature.BURNING && !event.player.isPotionActive(PotionInit.HYPERTHERMIA))
+					event.player.addPotionEffect(new PotionEffect(PotionInit.HYPERTHERMIA, ConfigHandler.common.temperatureSettings.climateDamageLength));
+				
+				// Effects applied if the effect is already active.
+				if (event.player.isPotionActive(PotionInit.HYPOTHERMIA))
+					PotionInit.HYPOTHERMIA.performEffect(event.player, 1);
+				else if (event.player.isPotionActive(PotionInit.HYPERTHERMIA))
+					PotionInit.HYPERTHERMIA.performEffect(event.player, 1);	
 			}
-			
-			if (temp.GetTemperaturePoint()<500)
-				return;
-			
-			if (temp.GetTemperature(event.player) == Temperature.FREEZING && !event.player.isPotionActive(PotionInit.HYPOTHERMIA))
-				event.player.addPotionEffect(new PotionEffect(PotionInit.HYPOTHERMIA, ConfigHandler.common.temperatureSettings.climateDamageLength));
-			else if (temp.GetTemperature(event.player) == Temperature.BURNING && !event.player.isPotionActive(PotionInit.HYPERTHERMIA))
-				event.player.addPotionEffect(new PotionEffect(PotionInit.HYPERTHERMIA, ConfigHandler.common.temperatureSettings.climateDamageLength));
-			
-			// Effects applied if the effect is already active.
-			if (event.player.isPotionActive(PotionInit.HYPOTHERMIA))
-				PotionInit.HYPOTHERMIA.performEffect(event.player, 1);
-			else if (event.player.isPotionActive(PotionInit.HYPERTHERMIA))
-				PotionInit.HYPERTHERMIA.performEffect(event.player, 1);
-			
-			temp.ResetTemperaturePoint();
+
 		}
 	}
 	
@@ -133,7 +138,7 @@ public class LivingEvent {
 		if (event.getPlayer().world.isRemote || ConfigHandler.common.staminaSettings.disableStamina)
 			return;
 		
-		Stamina stamina = (Stamina) event.getPlayer().getCapability(StaminaProvider.STAMINA, null);
+		StaminaCapability stamina = (StaminaCapability) event.getPlayer().getCapability(StaminaProvider.STAMINA, null);
 		
 		if (!stamina.FireAction(ActionType.MINING, event.getPlayer()))
 			event.setCanceled(true);
@@ -145,7 +150,7 @@ public class LivingEvent {
 		if (event.getEntityPlayer().world.isRemote || ConfigHandler.common.staminaSettings.disableStamina)
 			return;
 		
-		Stamina stamina = (Stamina) event.getEntityPlayer().getCapability(StaminaProvider.STAMINA, null);
+		StaminaCapability stamina = (StaminaCapability) event.getEntityPlayer().getCapability(StaminaProvider.STAMINA, null);
 		
 		if (!stamina.FireAction(ActionType.ATTACKING, event.getEntityPlayer()))
 			event.setCanceled(true);
@@ -158,7 +163,7 @@ public class LivingEvent {
 			return;
 		
 		EntityPlayer player = (EntityPlayer) event.getEntity();
-        Stamina stamina = (Stamina) player.getCapability(StaminaProvider.STAMINA, null);
+		StaminaCapability stamina = (StaminaCapability) player.getCapability(StaminaProvider.STAMINA, null);
 		
         /* Stop the player from jumping in the case that they have no stamina. */
         if (!stamina.FireAction(ActionType.JUMPING, (EntityPlayer)event.getEntity()))
@@ -167,7 +172,7 @@ public class LivingEvent {
 		if (player.world.isRemote || player.isCreative() || ConfigHandler.common.staminaSettings.disableStamina)
 			return;
 		
-        Thirst thirstStats = (Thirst) player.getCapability(ThirstProvider.THIRST, null);
+        ThirstCapability thirstStats = (ThirstCapability) player.getCapability(ThirstProvider.THIRST, null);
         thirstStats.AddExhaustion(player.isSprinting() ? 0.8F : 0.2F);
 	}
 	
