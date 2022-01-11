@@ -23,7 +23,10 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class GUIController {
     public static final ResourceLocation OVERLAY = new ResourceLocation("difficultymod:textures/gui/overlay.png");
 
@@ -57,7 +60,7 @@ public class GUIController {
 		Minecraft      mc         = Minecraft.getMinecraft();
 		EntityPlayer   player     = mc.player;
         
-		if (event.getType() != ElementType.ALL)
+		if (event.getType() != ElementType.AIR)
 			return;
 		
         minecraft.getTextureManager().bindTexture(OVERLAY); // Bind the textures related to the overlay.
@@ -92,11 +95,8 @@ public class GUIController {
 		    createGUIChunkBar(width, height+4, 0, 36, player.getFoodStats().getFoodLevel(), player.getFoodStats().getSaturationLevel(), 20);
 		}
 		
-		if (event.getType() != ElementType.AIR)
-				return;
-		
         createGUIChunkBar(width+(!ConfigHandler.client.useOldGUI ? 10 : 0), height+5, 0, 9, thirst.Get().thirst, (float)thirst.Get().hydration, thirst.Get().GetMaxThirst());
-    	GuiIngameForge.right_height += 10; // Increment the right height.
+    	GuiIngameForge.right_height += 15; // Increment the right height.
 	}
 	
 	/**

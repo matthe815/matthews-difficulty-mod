@@ -1,0 +1,33 @@
+{ 
+    "type": "minecraft:crafting_shaped",
+    "pattern":
+    [
+        " a ",
+        " b ",
+        " s "
+    ],
+    "key":
+    {
+        "a":
+        {
+            "item": "minecraft:pumpkin"
+        },
+
+        "b":
+        {
+            "item": "minecraft:potion",
+      		"potion": "minecraft:water"
+        },
+
+        "s":
+        {
+            "item": "minecraft:sugar"
+        }
+    },
+
+    "result": 
+    {
+      "item": "difficultymod:pumpkin_juice",
+      "count": 1
+    }
+  }

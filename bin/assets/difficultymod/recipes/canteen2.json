@@ -1,0 +1,26 @@
+{ 
+    "type": "minecraft:crafting_shaped",
+    "pattern":
+    [
+        " l ",
+        "lgl",
+        "lll"
+    ],
+    "key": 
+    {
+        "l":
+        {
+            "item":"minecraft:leather"
+        },
+        "g":
+        {
+            "item":"minecraft:glass_bottle"
+        }
+    },
+
+    "result": 
+    {
+      "item": "difficultymod:empty_canteen2",
+      "count": 1
+    }
+  }

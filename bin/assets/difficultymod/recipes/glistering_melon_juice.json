@@ -1,0 +1,33 @@
+{ 
+    "type": "minecraft:crafting_shaped",
+    "pattern":
+    [
+        " a ",
+        " b ",
+        " s  "
+    ],
+    "key":
+    {
+        "a":
+        {
+            "item": "minecraft:glistering_melon"
+        },
+
+        "b":
+        {
+            "item": "minecraft:potion",
+      		"potion": "minecraft:water"
+        },
+
+        "s":
+        {
+            "item": "minecraft:sugar"
+        }
+    },
+
+    "result": 
+    {
+      "item": "difficultymod:glistering_melon_juice",
+      "count": 1
+    }
+  }
