@@ -3,16 +3,19 @@ package difficultymod.capabilities.thirst;
 import javax.vecmath.Vector3d;
 
 import difficultymod.core.ConfigHandler;
+import difficultymod.core.DifficultyMod;
+import difficultymod.networking.ThirstUpdatePacket;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 
 public class ThirstCapability implements IThirst
 {
-	private Thirst thirst = new Thirst().SetThirst(20);
-	private Thirst lastThirst = new Thirst();
+	private Thirst thirst;
+	private Thirst lastThirst;
     
     private int tickRate = ConfigHandler.common.thirstSettings.thirstTickRate;
     private EntityPlayer player;
@@ -22,7 +25,10 @@ public class ThirstCapability implements IThirst
     /**Used to time the seconds passed since thirst damage was last dealt to the player*/
     private int thirstTimer;
     
-    public ThirstCapability() {}
+    public ThirstCapability() {
+    	thirst = new Thirst().SetThirst(20);
+    	lastThirst = thirst;
+    }
     
     public void SetPlayer (EntityPlayer player)
     {
@@ -73,13 +79,14 @@ public class ThirstCapability implements IThirst
 	@Override
 	public boolean HasChanged()
 	{
-		return !this.thirst.equals(this.lastThirst);
+		return this.Get().thirst != this.lastThirst.thirst;
 	}
 	
 	@Override
 	public void onSendClientUpdate()
 	{
-		this.lastThirst = this.thirst;
+		this.lastThirst.thirst = this.thirst.thirst;
+		DifficultyMod.network.sendTo(new ThirstUpdatePacket(this.Get()), (EntityPlayerMP) this.player);
 	}
 	
     /**
@@ -88,24 +95,18 @@ public class ThirstCapability implements IThirst
 	@Override
     public void OnTick(Phase phase)
     {
-    	switch (phase) {
-    	case END:
-    		break;
-    		
-    	case START:
-    		if (movementVec == null)
-    			return;
-    		
-    		Vector3d movement = new Vector3d(player.posX, player.posY, player.posZ);
-    		movement.sub(movementVec); movement.absolute();
-    		int distance = (int)Math.round(movement.length() * 100.0F);
-    		
-    		if (distance > 0) applyMovementExhaustion(player, distance);
-    		else this.AddExhaustion(0.0001F);
-		default:
+		if (phase != Phase.START) return; // Stop here if it's not phase start.
+
+		if (movementVec == null)
 			return;
-    	}
-    	
+		
+		Vector3d movement = new Vector3d(player.posX, player.posY, player.posZ);
+		movement.sub(movementVec); movement.absolute();
+		int distance = (int)Math.round(movement.length() * 100.0F);
+		
+		if (distance > 0) applyMovementExhaustion(player, distance);
+		else this.AddExhaustion(0.0001F);
+		
     	if (player.world.getDifficulty() == EnumDifficulty.PEACEFUL) // Refill the thirst gauge on peaceful.
     		this.Add(new Thirst().SetThirst(1));
     	
@@ -114,6 +115,8 @@ public class ThirstCapability implements IThirst
     	if (this.Get().exhaustion >= 20) this.Consume();
     	
     	if (this.Get().thirst <= 0) {
+        	this.Get().thirst = 0; // Keep at zero instead of further dropping.
+        	
         	this.thirstTimer++;
         	
         	if (thirstTimer > tickRate) {
@@ -124,6 +127,9 @@ public class ThirstCapability implements IThirst
     	
         if (player.isSprinting() && this.Get().thirst <= 6)
             player.setSprinting(false);
+        
+        if ( this.HasChanged ( ) ) 
+			this.onSendClientUpdate ();
     }
     
     public void Consume() {

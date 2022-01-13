@@ -2,6 +2,8 @@ package difficultymod.gui.handlers;
 
 import java.util.Random;
 
+import org.lwjgl.opengl.GL11;
+
 import difficultymod.capabilities.temperature.TemperatureCapability;
 import difficultymod.capabilities.temperature.TemperatureProvider;
 import difficultymod.capabilities.thirst.ThirstCapability;
@@ -60,19 +62,16 @@ public class GUIController {
 		Minecraft      mc         = Minecraft.getMinecraft();
 		EntityPlayer   player     = mc.player;
         
+		// Draw a vignette.
+		if (event.getType() == ElementType.VIGNETTE && !ConfigHandler.common.temperatureSettings.disableTemperature) {
+			drawTemperature((TemperatureCapability)player.getCapability(TemperatureProvider.TEMPERATURE, null), mc, event.getResolution());
+		}
+			
 		if (event.getType() != ElementType.AIR)
 			return;
 		
-        minecraft.getTextureManager().bindTexture(OVERLAY); // Bind the textures related to the overlay.
-        
-		if (!ConfigHandler.common.temperatureSettings.disableTemperature)
-			drawTemperature((TemperatureCapability)player.getCapability(TemperatureProvider.TEMPERATURE, null), mc, event.getResolution());
-		
 		if (!ConfigHandler.common.thirstSettings.disableThirst)
 			drawSurvivalStats(event, player);
-		
-
-	    minecraft.getTextureManager().bindTexture(Gui.ICONS); // Rebind the Minecraft textures.
 	}
 	
 	/**
@@ -88,15 +87,15 @@ public class GUIController {
         ScaledResolution resolution = event.getResolution();
         int              width      = resolution.getScaledWidth();
         int              height     = resolution.getScaledHeight();
-        ThirstCapability           thirst     = (ThirstCapability)player.getCapability(ThirstProvider.THIRST, null);
+        ThirstCapability thirst     = (ThirstCapability)player.getCapability(ThirstProvider.THIRST, null);
         
 		if (event.getType().equals(ElementType.FOOD) && !ConfigHandler.client.useOldGUI) {
 			event.setCanceled(true);
 		    createGUIChunkBar(width, height+4, 0, 36, player.getFoodStats().getFoodLevel(), player.getFoodStats().getSaturationLevel(), 20);
 		}
 		
-        createGUIChunkBar(width+(!ConfigHandler.client.useOldGUI ? 10 : 0), height+5, 0, 9, thirst.Get().thirst, (float)thirst.Get().hydration, thirst.Get().GetMaxThirst());
-    	GuiIngameForge.right_height += 15; // Increment the right height.
+        createGUIChunkBar(width + (!ConfigHandler.client.useOldGUI ? 10 : 0), height+5, 0, (!ConfigHandler.client.useOldGUI) ? 16 : 25, thirst.Get().thirst, (float)thirst.Get().hydration, thirst.Get().GetMaxThirst());
+    	GuiIngameForge.right_height += 12; // Increment the right height.
 	}
 	
 	/**
@@ -110,13 +109,16 @@ public class GUIController {
 	 */
 	private void createGUIChunkBar(int x, int y, int textureX, int textureY, int current, float saturation, int max)
 	{
+        Minecraft.getMinecraft().getTextureManager().bindTexture(OVERLAY); // Bind the textures related to the overlay.
+        GL11.glEnable(GL11.GL_BLEND); // Fix black background.
+
 		// Determine the left and top positions.
 		int left = x / 2 + 91,
 			top  = y - GuiIngameForge.right_height;
 		
 		// Begin rendering each individual nugget.
 		for (int i = 0; i < (max/2); i++) {
-			int dropletHalf = i*2+1; // The amount necessary to render a half nugget.
+			int dropletHalf = i * 2 + 1; // The amount necessary to render a half nugget.
 			
 			///
 			/// Control icon and texture renderer.
@@ -129,11 +131,14 @@ public class GUIController {
             if (saturation <= 0.0F && updateCounter % (current * 3 + 1) == 0) // Dynamically render "drain-capable" animation.
                 startY = startY + (random.nextInt(3) - 1);
             
-			minecraft.ingameGUI.drawTexturedModalRect(startX, startY, backgroundOffset, textureY, 9, 9); // Draw the image background.
+			minecraft.ingameGUI.drawTexturedModalRect(startX, startY, 0, 25, 9, 9); // Draw the image background.
 			
-			if (current >= dropletHalf) // If there's enough to make atleast a half droplet, render a droplet.
-            	minecraft.ingameGUI.drawTexturedModalRect(startX, startY, (iconIndex + (current == dropletHalf ? 5 : 4)) * 9, textureY, 9, 9);
+			// Render over-top.
+			if (current >= dropletHalf)
+				minecraft.ingameGUI.drawTexturedModalRect(startX, startY, (iconIndex + (current == dropletHalf ? 5 : 4)) * 9, textureY, 9, 9);
 		}
+		
+	    minecraft.getTextureManager().bindTexture(Gui.ICONS); // Rebind the Minecraft textures.
 	}
   
 	/**
@@ -142,8 +147,10 @@ public class GUIController {
 	 * @param mc
 	 * @param scale
 	 */
-	public static void drawTemperature (TemperatureCapability temperature, Minecraft mc, ScaledResolution scale)
+	private void drawTemperature (TemperatureCapability temperature, Minecraft mc, ScaledResolution scale)
 	{
+		temperature.SetPlayer(mc.player);
+		
 		switch (temperature.Get()) {
 		case FREEZING:
 			renderVignette(mc, scale, 0, 0, 255);
@@ -158,7 +165,7 @@ public class GUIController {
 		}
 	}
 	
-	private static void renderVignette(Minecraft mc, ScaledResolution scaledRes, float r, float g, float b) {
+	private void renderVignette(Minecraft mc, ScaledResolution scaledRes, float r, float g, float b) {
 		GlStateManager.disableDepth();
 		GlStateManager.enableBlend();
 		GlStateManager.depthMask(false);

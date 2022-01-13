@@ -1,30 +1,25 @@
 package difficultymod.events;
 
+import difficultymod.api.capability.CapabilityHelper;
 import difficultymod.api.stamina.ActionType;
-import difficultymod.capabilities.stamina.IStamina;
 import difficultymod.capabilities.stamina.StaminaCapability;
 import difficultymod.capabilities.stamina.StaminaProvider;
 import difficultymod.capabilities.temperature.TemperatureCapability;
 import difficultymod.capabilities.temperature.TemperatureProvider;
 import difficultymod.capabilities.temperature.Temperature;
-import difficultymod.capabilities.thirst.IThirst;
+import difficultymod.capabilities.thirst.Thirst;
 import difficultymod.capabilities.thirst.ThirstCapability;
 import difficultymod.capabilities.thirst.ThirstProvider;
 import difficultymod.core.ConfigHandler;
 import difficultymod.core.DifficultyMod;
 import difficultymod.core.init.PotionInit;
-import difficultymod.networking.StaminaUpdatePacket;
-import difficultymod.networking.ThirstUpdatePacket;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -42,54 +37,31 @@ public class LivingEvent {
 						cold_res_id=0;
 	
 	@SubscribeEvent
-	public void livingUpdate(PlayerTickEvent event) 
+	public void onEnchantmentUpdate (PlayerTickEvent event) 
 	{
 		if (!(event.player instanceof EntityPlayer))
 			return;
 		
 		EntityPlayer player = event.player;
-		boolean[] buffs = new boolean[] {false, false};
 		
 		if (heat_res_id == 0)
 			heat_res_id = (short)Enchantment.getEnchantmentID(DifficultyMod.heat_resistance);
 			
 		if (cold_res_id == 0)
 			cold_res_id = (short)Enchantment.getEnchantmentID(DifficultyMod.cold_resistance);
-		
-		for (ItemStack item : player.getArmorInventoryList()) {
-            NBTTagList tagList = item.getEnchantmentTagList();
-            
-            for (int i = 0; i < tagList.tagCount(); i++) {
-                NBTTagCompound idTag = tagList.getCompoundTagAt(i);
-                buffs[0] = idTag.getShort("id") == heat_res_id;
-                buffs[1] = idTag.getShort("id") == cold_res_id;
-            }
-		}
 	}
 	
 	@SubscribeEvent
-	public void Update(PlayerTickEvent event)
+	public void onGameTick (PlayerTickEvent event)
 	{		
-		if (event.player.world.isRemote||event.player.isCreative())
+		if ( event.player.world.isRemote || event.player.isCreative ( ) )
 			return;
 		
-		depletion = ConfigHandler.common.staminaSettings.actionDepletion;
-		
-		/* Register thirst processes in the case that it's enabled. */
-		if (!ConfigHandler.common.thirstSettings.disableThirst) {
-			if (event.player.hasCapability(ThirstProvider.THIRST, null)) 
-			{
-				ThirstCapability thirst = (ThirstCapability)event.player.getCapability(ThirstProvider.THIRST, null);
-				thirst.SetPlayer(event.player);
-				thirst.OnTick(event.phase);
-				
-				//if (thirst.HasChanged()) {
-				//	thirst.onSendClientUpdate();
-				//	DifficultyMod.network.sendTo(new ThirstUpdatePacket(thirst.Get()), (EntityPlayerMP) event.player);
-				//}
-			}
-
+		// Allow a game-tick to occur when the player has the capability and the server has it enabled.
+		if (CapabilityHelper.GetThirst(event.player) != null) {
+			CapabilityHelper.GetThirst(event.player).OnTick(event.phase);
 		}
+
 		
 		/* Register stamina processes if it's enabled. */
 		if (!ConfigHandler.common.staminaSettings.disableStamina) {
@@ -111,11 +83,6 @@ public class LivingEvent {
 				TemperatureCapability temp = (TemperatureCapability)event.player.getCapability(TemperatureProvider.TEMPERATURE, null);
 				
 				temp.SetPlayer(event.player);
-				temp.Get(); // Send an update tick.
-				
-				if (temp.HasChanged()) {
-					temp.onSendClientUpdate();
-				}
 				
 				if (temp.Get() == Temperature.FREEZING && !event.player.isPotionActive(PotionInit.HYPOTHERMIA))
 					event.player.addPotionEffect(new PotionEffect(PotionInit.HYPOTHERMIA, ConfigHandler.common.temperatureSettings.climateDamageLength));
@@ -140,7 +107,7 @@ public class LivingEvent {
 		
 		StaminaCapability stamina = (StaminaCapability) event.getPlayer().getCapability(StaminaProvider.STAMINA, null);
 		
-		if (!stamina.FireAction(ActionType.MINING, event.getPlayer()))
+		if (!stamina.FireAction(ActionType.MINING, 8f))
 			event.setCanceled(true);
 	}
 	
@@ -152,7 +119,7 @@ public class LivingEvent {
 		
 		StaminaCapability stamina = (StaminaCapability) event.getEntityPlayer().getCapability(StaminaProvider.STAMINA, null);
 		
-		if (!stamina.FireAction(ActionType.ATTACKING, event.getEntityPlayer()))
+		if (!stamina.FireAction(ActionType.ATTACKING, 5f))
 			event.setCanceled(true);
 	}
 	
@@ -164,16 +131,17 @@ public class LivingEvent {
 		
 		EntityPlayer player = (EntityPlayer) event.getEntity();
 		StaminaCapability stamina = (StaminaCapability) player.getCapability(StaminaProvider.STAMINA, null);
+		stamina.SetPlayer(player);
 		
         /* Stop the player from jumping in the case that they have no stamina. */
-        if (!stamina.FireAction(ActionType.JUMPING, (EntityPlayer)event.getEntity()))
+        if (!stamina.FireAction(ActionType.JUMPING, 15f))
             player.motionY = 0.0;
         
 		if (player.world.isRemote || player.isCreative() || ConfigHandler.common.staminaSettings.disableStamina)
 			return;
 		
         ThirstCapability thirstStats = (ThirstCapability) player.getCapability(ThirstProvider.THIRST, null);
-        thirstStats.AddExhaustion(player.isSprinting() ? 0.8F : 0.2F);
+        thirstStats.Add(new Thirst().SetExhaustion(player.isSprinting() ? 0.8F : 0.2F));
 	}
 	
 	@SubscribeEvent

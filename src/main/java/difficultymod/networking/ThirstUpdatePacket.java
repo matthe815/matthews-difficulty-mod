@@ -1,5 +1,6 @@
 package difficultymod.networking;
 
+import difficultymod.capabilities.thirst.IThirst;
 import difficultymod.capabilities.thirst.Thirst;
 import difficultymod.capabilities.thirst.ThirstCapability;
 import difficultymod.capabilities.thirst.ThirstProvider;
@@ -16,6 +17,8 @@ public class ThirstUpdatePacket implements IMessage {
 	  private int thirst;
 	  private double hydration;
 
+	  public ThirstUpdatePacket () {}
+	  
 	  public ThirstUpdatePacket(Thirst thirst) 
 	  {
 		  if (ConfigHandler.Debug_Options.showPacketMessages)
@@ -51,7 +54,8 @@ public class ThirstUpdatePacket implements IMessage {
 	    		if (Minecraft.getMinecraft().player == null)
 	    			return null;
 	    		
-	    		ThirstCapability thirst = (ThirstCapability)Minecraft.getMinecraft().player.getCapability(ThirstProvider.THIRST, null);
+	    		IThirst thirst = Minecraft.getMinecraft().player.getCapability(ThirstProvider.THIRST, null);
+	    		
 	    		thirst.Set(new Thirst().SetThirst(message.thirst).SetHydration(message.hydration));
 	    	}
 	    		return null;

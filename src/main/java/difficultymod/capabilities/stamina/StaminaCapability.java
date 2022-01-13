@@ -71,8 +71,11 @@ public class StaminaCapability implements IStamina
 	@Override
 	public void Remove(Stamina value) 
 	{
-		System.out.println("Removing " + value.stamina);
-		System.out.println(this.stamina.stamina);
+		if (ConfigHandler.Debug_Options.showUpdateMessages) {
+			System.out.println("Removing " + value.stamina);
+			System.out.println(this.stamina.stamina);	
+		}
+		
 		this.stamina.stamina -= value.stamina;
 	}
 	
@@ -84,9 +87,9 @@ public class StaminaCapability implements IStamina
 	/**
 	 * Fire an action, returning whether or not the action was successful.
 	 */
-	public boolean FireAction(String action) 
+	public boolean FireAction(String action, float defStamina) 
 	{
-		float requiredStamina = StaminaHelper.GetUsage(action) != 0 ? StaminaHelper.GetUsage(action) : 0.33f;
+		float requiredStamina = StaminaHelper.GetUsage(action) != 0 ? StaminaHelper.GetUsage(action) : defStamina;
 
 		//if (player.getActivePotionEffect(PotionInit.STAMINALESS)!=null) // Stop right here if the player has Staminaless.
 		//	return true;
@@ -96,23 +99,23 @@ public class StaminaCapability implements IStamina
 			return true;
 		}
 		
-		if (ConfigHandler.common.staminaSettings.applySlowness) // Apply slowness if out of stamina and is enabled.
+		if (this.player != null && ConfigHandler.common.staminaSettings.applySlowness) // Apply slowness if out of stamina and is enabled.
 			player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 100, 2));
 		
 		return false;
 	}
 	
 
-	public boolean FireAction(ActionType action) {
-		return FireAction(action.toString().toLowerCase());
+	public boolean FireAction(ActionType action, float defStamina) {
+		return FireAction(action.toString().toLowerCase(), defStamina);
 	}
 
 	/**
 	 * Fire an action, returning whether or not the action was successful.
 	 * @deprecated
 	 */
-	public boolean FireAction(ActionType action, EntityPlayer player) {
-		return FireAction(action.toString().toLowerCase());
+	public boolean FireAction(ActionType action, EntityPlayer player, float defStamina) {
+		return FireAction(action.toString().toLowerCase(), defStamina);
 	}
 
 	@Override
@@ -127,7 +130,7 @@ public class StaminaCapability implements IStamina
 		
 		if (player.isSprinting() && !player.isCreative())
 		{
-			if (!FireAction(ActionType.RUNNING)) // If running fails to occur, cancel running.
+			if (!FireAction(ActionType.RUNNING, 0.33f)) // If running fails to occur, cancel running.
 			{
 				player.setSprinting(false);
 			}
@@ -146,7 +149,6 @@ public class StaminaCapability implements IStamina
 
 	public void onSendClientUpdate() 
 	{
-		System.out.println("Client Update");
 		lastStamina = stamina.stamina;
 		DifficultyMod.network.sendTo(new StaminaUpdatePacket(Get()), (EntityPlayerMP)player);
 	}

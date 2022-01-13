@@ -19,6 +19,6 @@ public interface IStamina extends IBaseCapability {
 
 	void Remove(Stamina value);
 
-	boolean FireAction(ActionType type);
+	boolean FireAction(ActionType type, float defStamina);
 
 }

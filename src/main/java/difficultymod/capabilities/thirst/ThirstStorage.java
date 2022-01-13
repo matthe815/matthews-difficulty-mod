@@ -26,6 +26,6 @@ public class ThirstStorage implements IStorage<IThirst>
         NBTTagCompound compound = (NBTTagCompound)nbt;
         
         if (compound.hasKey(capability.getName()))
-            instance.Set(new Thirst().SetThirst((int)compound.getFloat(capability.getName())));
+            instance.Set(new Thirst().SetThirst((int)compound.getDouble(capability.getName())));
     }
 }
