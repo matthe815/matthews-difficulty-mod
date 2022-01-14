@@ -30,7 +30,7 @@ public class CreativeTabBuilder extends CreativeTabs {
 
 	@Override
 	public ItemStack getTabIconItem() {
-		return new ItemStack(Item.getByNameOrId("difficultymod:canteen1"));
+		return new ItemStack(this.renderItem);
 	}
 
 }

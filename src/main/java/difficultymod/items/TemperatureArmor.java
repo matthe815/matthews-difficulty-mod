@@ -1,6 +1,7 @@
 package difficultymod.items;
 
 import difficultymod.core.DifficultyMod;
+import lieutenant.registry.RegisterHandler;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
 
@@ -20,6 +21,7 @@ public abstract class TemperatureArmor extends ItemArmor {
 	
 	public TemperatureArmor(ArmorMaterial material, int so, EntityEquipmentSlot slot) {
 		super(DifficultyMod.wool_material, so, slot);
+		RegisterHandler.AddItem(this);
 	}
 
 }

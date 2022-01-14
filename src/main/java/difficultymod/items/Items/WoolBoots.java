@@ -5,10 +5,10 @@ import difficultymod.creativetabs.CreativeTabHandler;
 import difficultymod.items.TemperatureArmor;
 import net.minecraft.inventory.EntityEquipmentSlot;
 
-public class WoolArmorBoots extends TemperatureArmor 
+public class WoolBoots extends TemperatureArmor 
 {
 
-	public WoolArmorBoots() {
+	public WoolBoots() {
 		super(DifficultyMod.wool_material, 0, EntityEquipmentSlot.FEET);
 		this.setRegistryName("difficultymod:wool_boots");
 		this.setUnlocalizedName("difficultymod.woolBoots");

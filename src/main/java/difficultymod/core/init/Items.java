@@ -1,11 +1,16 @@
 package difficultymod.core.init;
 
 import difficultymod.items.Items.*;
+import difficultymod.api.gui.DifficultyModGUI;
 import difficultymod.core.ConfigHandler;
+import difficultymod.core.DifficultyMod;
 import difficultymod.creativetabs.CreativeTabHandler;
+import difficultymod.items.ArmorItem;
 import difficultymod.items.DrinkableItem;
+import difficultymod.items.TemperatureArmor;
 import lieutenant.registry.RegisterHandler;
 import net.minecraft.block.Block;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 
 public class Items {
@@ -50,6 +55,18 @@ public class Items {
 		public int GetThirstModifier() { return 8; };
 	};
 	
+	public static final ArmorItem WET_HELM = new ArmorItem("wetHelm", DifficultyMod.wet_material, EntityEquipmentSlot.HEAD);
+	
+	public static final ArmorItem WET_CHESTPLATE = new ArmorItem("wetChest", DifficultyMod.wet_material, EntityEquipmentSlot.CHEST);
+	
+	public static final ArmorItem WOOL_BOOTS = new ArmorItem("woolBoots", DifficultyMod.wool_material, EntityEquipmentSlot.FEET);
+	
+	public static final ArmorItem WOOL_CHESTPLATE = new ArmorItem("woolShirt", DifficultyMod.wool_material, EntityEquipmentSlot.CHEST);
+	
+	public static final ArmorItem WOOL_LEGGINGS = new ArmorItem("woolPants", DifficultyMod.wool_material, EntityEquipmentSlot.LEGS);
+	
+	public static final ArmorItem WOOL_HAT = new ArmorItem("woolHat", DifficultyMod.wool_material, EntityEquipmentSlot.HEAD);
+	
 	
 	public static void init ()
 	{
@@ -60,7 +77,7 @@ public class Items {
 				new EmptyCanteen2(),
 				new Level1Canteen(),
 				new Level2Canteen(),
-				new WoolArmorBoots(),
+				new WoolBoots(),
 				new WoolArmorChest(),
 				new WoolArmorHelm(),
 				new WoolArmorLeggings(),
@@ -83,6 +100,10 @@ public class Items {
 	{
 		for (Item item : items)
 			RegisterHandler.AddItem(item);
+		
+		for (Item item : RegisterHandler.ITEMS) {
+			item.setCreativeTab(CreativeTabHandler.DifficultyModTab);
+		}
 	}
 	
 	/**

@@ -6,7 +6,9 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 
+import difficultymod.capabilities.thirst.DamageSourceThirst;
 import difficultymod.core.init.*;
+import difficultymod.creativetabs.CreativeTabHandler;
 import extratan.enchantments.ColdResistanceEnchantment;
 import extratan.enchantments.HeatResistanceEnchantment;
 import extratan.gui.handlers.*;
@@ -48,14 +50,16 @@ public class DifficultyMod {
 	
 	public static HeatResistanceEnchantment heat_resistance = new HeatResistanceEnchantment();
 	public static ColdResistanceEnchantment cold_resistance = new ColdResistanceEnchantment();
+	public static DamageSourceThirst SOURCE_THIRST = new DamageSourceThirst();
 	
 	public static SimpleNetworkWrapper network;
+	
+	public static final CreativeTabHandler creativeTabs = new CreativeTabHandler();
 	
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) 
 	{
 		System.out.println(MODID + " is pre-loading!");
-		
 	    network = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
 
 	    CapabilityCore.init();
@@ -71,6 +75,7 @@ public class DifficultyMod {
 	public void init(FMLInitializationEvent event) 
 	{
 		System.out.println(MODID + " is loading!");
+	    difficultymod.core.init.Items.init();
 		
 		NBTTagCompound waterTag = new NBTTagCompound();
 		waterTag.setString("Potion", "minecraft:water");

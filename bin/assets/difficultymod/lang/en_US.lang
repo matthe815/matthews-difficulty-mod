@@ -22,9 +22,9 @@ item.difficultymod.beetrootJuice.name=Beetroot Juice
 item.difficultymod.goldenCarrotJuice.name=Golden Carrot Juice
 
 # Items - Armor
-item.difficultymod.woolHelm.name=Wool Cap
-item.difficultymod.woolChest.name=Wool Tunic
-item.difficultymod.woolLeggings.name=Wool Pants
+item.difficultymod.woolHat.name=Wool Cap
+item.difficultymod.woolShirt.name=Wool Tunic
+item.difficultymod.woolPants.name=Wool Pants
 item.difficultymod.woolBoots.name=Wool Boots
 item.difficultyMod.woolSocks.name=Wool Socks
 

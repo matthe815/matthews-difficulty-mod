@@ -95,20 +95,20 @@ public class ThirstCapability implements IThirst
 	@Override
     public void OnTick(Phase phase)
     {
-		if (phase != Phase.START) return; // Stop here if it's not phase start.
-
-		if (movementVec == null)
-			return;
-		
-		Vector3d movement = new Vector3d(player.posX, player.posY, player.posZ);
-		movement.sub(movementVec); movement.absolute();
-		int distance = (int)Math.round(movement.length() * 100.0F);
-		
-		if (distance > 0) applyMovementExhaustion(player, distance);
-		else this.AddExhaustion(0.0001F);
-		
-    	if (player.world.getDifficulty() == EnumDifficulty.PEACEFUL) // Refill the thirst gauge on peaceful.
-    		this.Add(new Thirst().SetThirst(1));
+		if (this.movementVec != null && phase == Phase.START) 
+		{
+			Vector3d movement = new Vector3d(player.posX, player.posY, player.posZ);
+			movement.sub(movementVec); movement.absolute();
+			int distance = (int)Math.round(movement.length() * 100.0F);
+			
+			if (distance > 0) applyMovementExhaustion(player, distance);
+			this.Add(new Thirst().SetExhaustion(0.8f / ConfigHandler.common.thirstSettings.secondsPerDroplet));
+			
+	    	if (player.world.getDifficulty() == EnumDifficulty.PEACEFUL) // Refill the thirst gauge on peaceful.
+	    		this.Add(new Thirst().SetThirst(1));	
+	    	
+	    	return;
+		}
     	
     	this.movementVec = new Vector3d(player.posX, player.posY, player.posZ);
 
@@ -121,7 +121,7 @@ public class ThirstCapability implements IThirst
         	
         	if (thirstTimer > tickRate) {
         		thirstTimer = 0;
-        		player.attackEntityFrom(DamageSource.STARVE, 1.0F);
+        		player.attackEntityFrom(DifficultyMod.SOURCE_THIRST, 1.0F);
         	}	
     	}
     	
@@ -134,8 +134,11 @@ public class ThirstCapability implements IThirst
     
     public void Consume() {
     	// Apply a reduction in either thirst or hydration. Depending on what the player has.
-    	this.Remove(new Thirst().SetThirst(this.thirst.hydration <= 0 ? 1 : 0).SetHydration(this.thirst.hydration > 0 ? 1 : 0));
-    	this.Remove(new Thirst().SetExhaustion(-20));
+    	this.Remove(new Thirst()
+    			.SetThirst(this.thirst.hydration <= 0 ? 1 : 0)
+    			.SetHydration(this.thirst.hydration > 0 ? 1 : 0)
+    			.SetExhaustion(20)
+    	);
 	}
 
 	public void applyJump(EntityPlayer player)
