@@ -73,12 +73,19 @@ public class ConfigHandler {
 			})
 			public int maxThirstLevel = 20;
 			
-			@Name("Thirst Tick Rate")
+			@Name("Damage Tick Rate")
 			@Comment(value = {
-				"Determines how many ticks it takes for a single half-droplet to deplete.",
+				"Determines the number of ticks before taking damage when thirst empties.",
 				"DEFAULT: 80"
 			})
 			public int thirstTickRate = 80;
+			
+			@Name("Seconds Per Half Droplet")
+			@Comment(value = {
+				"The number of seconds necessary to take a half droplet of thirst while standing still.",
+				"DEFAULT: 40"
+			})
+			public int secondsPerDroplet = 40;
 			
 			@Name("Enable Quenched Effect")
 			@RequiresWorldRestart
