@@ -4,9 +4,9 @@ import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
 import difficultymod.api.stamina.StaminaHelper;
+import difficultymod.capabilities.stamina.StaminaCapability;
 import difficultymod.core.ConfigHandler;
 import difficultymod.core.DifficultyMod;
-import difficultymod.stamina.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
@@ -66,9 +66,9 @@ public class HUDHandler
 		int left = scale.getScaledWidth() / 2 + 27;
 		int top = (scale.getScaledHeight() / 2) + 20;
 
-		IStamina stamina = StaminaHelper.GetPlayer(player);
+		StaminaCapability stamina = StaminaHelper.GetPlayer(player);
 		
-		if (stamina.GetStamina() < stamina.GetMaxStamina(player))
+		if (stamina.Get().stamina < stamina.Get().GetMaxStamina(player))
 			disappearTicks=0;
 		
 		disappearTicks++;
@@ -77,12 +77,12 @@ public class HUDHandler
 			drawStamina(stamina, mc, left-15, top, 1);
 	}
 	
-	public static void drawStamina (IStamina stamina, Minecraft mc, int left, int top, float alpha)
+	public static void drawStamina (StaminaCapability stamina, Minecraft mc, int left, int top, float alpha)
 	{
 		mc.getTextureManager().bindTexture(icons);
 		
-		float maxExhaustion = stamina.GetMaxStamina(mc.player);
-		float ratio = stamina.GetStamina() / maxExhaustion;
+		float maxExhaustion = stamina.Get().GetMaxStamina(mc.player);
+		float ratio = stamina.Get().stamina / maxExhaustion;
 		int width = (int) (ratio * 30);
 		int height = 6;
 		int startY = top;

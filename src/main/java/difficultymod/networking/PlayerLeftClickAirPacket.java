@@ -1,8 +1,9 @@
 package difficultymod.networking;
 
+import difficultymod.capabilities.stamina.Stamina;
+import difficultymod.capabilities.stamina.StaminaCapability;
+import difficultymod.capabilities.stamina.StaminaProvider;
 import difficultymod.core.ConfigHandler;
-import difficultymod.stamina.IStamina;
-import difficultymod.stamina.StaminaProvider;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -37,9 +38,9 @@ public class PlayerLeftClickAirPacket implements IMessage {
 	    		if (!Minecraft.getMinecraft().player.hasCapability(StaminaProvider.STAMINA, null))
 	    			return null;
 	    		
-	    		IStamina stamina = Minecraft.getMinecraft().player.getCapability(StaminaProvider.STAMINA, null);
+	    		StaminaCapability stamina = (StaminaCapability)Minecraft.getMinecraft().player.getCapability(StaminaProvider.STAMINA, null);
 	    		
-	    		stamina.SetStamina(stamina.GetStamina()-5);
+	    		stamina.Remove(new Stamina().SetStamina(-5));
 	    	}
 	    		return null;
 	    }

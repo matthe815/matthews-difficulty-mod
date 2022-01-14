@@ -1,6 +1,7 @@
 package extratan.networking;
 
 import difficultymod.api.thirst.ThirstHelper;
+import difficultymod.capabilities.thirst.Thirst;
 import extratan.gui.handlers.NetworkHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -25,7 +26,7 @@ public class MessageExhaustionSync implements IMessage, IMessageHandler<MessageE
 			@Override
 			public void run() {
 				System.out.println("Recieved a thirst network packet for " + message.thirstExhaustion);
-				ThirstHelper.GetPlayer(NetworkHelper.getSidedPlayer(ctx)).SetExhaustion(message.thirstExhaustion);
+				ThirstHelper.GetPlayer(NetworkHelper.getSidedPlayer(ctx)).Set(new Thirst().SetExhaustion(message.thirstExhaustion));
 			}
 		});
 		return null;

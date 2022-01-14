@@ -1,5 +1,6 @@
 package difficultymod.items;
 
+import lieutenant.registry.RegisterHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;

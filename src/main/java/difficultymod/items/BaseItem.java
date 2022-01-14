@@ -1,18 +1,37 @@
 package difficultymod.items;
 
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import difficultymod.core.DifficultyMod;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.Enchantment;
+import lieutenant.registry.*;
 
-public class BaseItem extends Item 
+public class BaseItem extends Item
 {
-	
-		public BaseItem(String name, String registryName, CreativeTabs creativeTab)
+		public BaseItem(String name, CreativeTabs creativeTab)
 		{
-			this.setUnlocalizedName(DifficultyMod.MODID + "." + name);
-			this.setRegistryName(registryName);
-			this.setCreativeTab(creativeTab);
-			this.setMaxDamage(5);
+			setUnlocalizedName(DifficultyMod.MODID + "." + name)
+				.setRegistryName(name)
+				.setCreativeTab(creativeTab);
+			
+			RegisterHandler.AddItem(this);
 		}
+		
+		@Override
+		public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+			return false;
+		}
+		
+		@Override
+		public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
+			return false;
+		}
+		
+		@Override
+		public int getItemEnchantability() {
+			return 0;
+		}
+		
 
 }

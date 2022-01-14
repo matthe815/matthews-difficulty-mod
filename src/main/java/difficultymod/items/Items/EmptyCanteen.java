@@ -21,37 +21,30 @@ public class EmptyCanteen extends BaseItemBucket
 	
 	public EmptyCanteen() 
 	{
-		super("emptycanteen", "empty_canteen", CreativeTabHandler.DifficultyModTab);
+		super("emptycanteen", CreativeTabHandler.DifficultyModTab);
 	}
 	
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		RayTraceResult result = this.rayTrace(worldIn, playerIn, true); 
-		ItemStack stack = playerIn.getHeldItemMainhand();
+		ItemStack      stack  = playerIn.getHeldItemMainhand();
 		
-		if (result == null)
-			return new ActionResult<ItemStack>(EnumActionResult.FAIL, stack);
+		// Give up if there's no results from raytracing the block position.
+		if (result == null) return new ActionResult<ItemStack>(EnumActionResult.FAIL, stack);
 		
-		BlockPos pos = result.getBlockPos();
+		BlockPos  pos   = result.getBlockPos();
+		Block     block = worldIn.getBlockState(pos).getBlock();
 		
-		if (pos == null)
-			return new ActionResult<ItemStack>(EnumActionResult.FAIL, stack);
+		// If there's no block at that position, just give up there.
+		if (block == null) return new ActionResult<ItemStack>(EnumActionResult.FAIL, stack);
 		
-		Block block = worldIn.getBlockState(pos).getBlock();
+		// If you're not interacting with water, you can stop here.
+		if (block.getRegistryName() != Blocks.WATER.getRegistryName()) return new ActionResult<ItemStack>(EnumActionResult.FAIL, stack);
 		
-		if (block == null)
-			return new ActionResult<ItemStack>(EnumActionResult.FAIL, stack);
-		
-		ItemStack newstack;
-
-		newstack = new ItemStack(Item.getByNameOrId("difficultymod:canteen1"));
-		
-		if (block.getRegistryName() != Blocks.WATER.getRegistryName())
-			return new ActionResult<ItemStack>(EnumActionResult.FAIL, stack);
-		
+		// Play a bottle filling sound.
 		playerIn.playSound(new SoundEvent(new ResourceLocation("minecraft:item.bottle.fill")), 1f, 1f);
 		
 		super.onItemRightClick(worldIn, playerIn, handIn);
-		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, newstack);
+		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, new ItemStack(Item.getByNameOrId("difficultymod:canteen1")));
 	}
 }

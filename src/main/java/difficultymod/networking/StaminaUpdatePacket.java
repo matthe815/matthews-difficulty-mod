@@ -1,8 +1,9 @@
 package difficultymod.networking;
 
+import difficultymod.capabilities.stamina.IStamina;
+import difficultymod.capabilities.stamina.Stamina;
+import difficultymod.capabilities.stamina.StaminaProvider;
 import difficultymod.core.ConfigHandler;
-import difficultymod.stamina.IStamina;
-import difficultymod.stamina.StaminaProvider;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -18,12 +19,12 @@ public class StaminaUpdatePacket implements IMessage {
 
 	  }
 
-	  public StaminaUpdatePacket(float f) 
+	  public StaminaUpdatePacket(Stamina stamina) 
 	  {
 		  if (ConfigHandler.Debug_Options.showPacketMessages)
-			  System.out.println(f);
+			  System.out.println(stamina.stamina);
 		  
-		  this.stamina = f;
+		  this.stamina = stamina.stamina;
 	  }
 
 	  @Override
@@ -42,16 +43,17 @@ public class StaminaUpdatePacket implements IMessage {
 
 	    @Override
 	    public IMessage onMessage(StaminaUpdatePacket message, MessageContext ctx) {
-	    	if (ConfigHandler.Debug_Options.showPacketMessages)
-	    		System.out.println("Got client thirst message.");
-	    	
+
 	    	if (ctx.side == Side.CLIENT) {
-	    		if (Minecraft.getMinecraft().player == null || !Minecraft.getMinecraft().player.hasCapability(StaminaProvider.STAMINA, null))
+	    		if (Minecraft.getMinecraft().player == null)
 	    			return null;
 	    		
 	    		IStamina stamina = Minecraft.getMinecraft().player.getCapability(StaminaProvider.STAMINA, null);
 	    		
-	    		stamina.SetStamina(message.stamina);
+	    		if (ConfigHandler.Debug_Options.showPacketMessages)
+	    			System.out.println(message.stamina);
+	    		
+	    		stamina.Set(new Stamina().SetStamina(message.stamina));
 	    	}
 	    		return null;
 	    }

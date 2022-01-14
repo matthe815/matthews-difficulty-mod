@@ -3,8 +3,8 @@ package difficultymod.api.thirst;
 import java.util.ArrayList;
 import java.util.List;
 
-import difficultymod.thirst.IThirst;
-import difficultymod.thirst.ThirstProvider;
+import difficultymod.capabilities.thirst.ThirstCapability;
+import difficultymod.capabilities.thirst.ThirstProvider;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -23,9 +23,9 @@ public class ThirstHelper
 	 * @param player
 	 * @return
 	 */
-    public static IThirst GetPlayer(EntityPlayer player)
+    public static ThirstCapability GetPlayer(EntityPlayer player)
     {
-        return player.getCapability(ThirstProvider.THIRST, null);
+        return (ThirstCapability)player.getCapability(ThirstProvider.THIRST, null);
     }
     
     /**

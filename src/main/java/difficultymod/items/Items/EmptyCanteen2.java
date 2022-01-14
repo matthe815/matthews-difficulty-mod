@@ -21,7 +21,7 @@ public class EmptyCanteen2 extends BaseItemBucket
 	
 	public EmptyCanteen2() 
 	{
-		super("emptycanteen_large", "empty_canteen2", CreativeTabHandler.DifficultyModTab);
+		super("emptycanteen_large", CreativeTabHandler.DifficultyModTab);
 	}
 	
 	@Override
