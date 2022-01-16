@@ -8,9 +8,10 @@ import net.minecraft.world.World;
 
 public class CanteenItem extends DrinkableItem 
 {
-	public CanteenItem(String name, CreativeTabs creativeTab)
+	public CanteenItem(String name, CreativeTabs creativeTab, int maxDamage)
 	{
 		super(name, creativeTab);
+		this.setMaxDamage(maxDamage);
 	}
 	
 	@Override

@@ -11,6 +11,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemBucketMilk;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
@@ -48,6 +49,8 @@ public class DrinkableItem extends ItemBucketMilk implements IBottledConsumable 
 	{
 		super.onItemUseFinish(stack, world, entity);
 		
+		if (!(entity instanceof EntityPlayer)) return null;
+		
 		// Cast and store the player and their thirst level.
 		EntityPlayer player = (EntityPlayer)entity;
 		ThirstCapability thirst = ThirstHelper.GetPlayer(player);
@@ -67,12 +70,13 @@ public class DrinkableItem extends ItemBucketMilk implements IBottledConsumable 
 	public int GetThirstModifier() {
 		return 0;
 	}
-
+	
 	@Override
 	public ItemStack GetConsumedItem() {
-		return null;
+		// TODO Auto-generated method stub
+		return new ItemStack(Items.GLASS_BOTTLE);
 	}
-
+	
 	@Override
 	public int GetTemperatureModifier() {
 		return 0;
