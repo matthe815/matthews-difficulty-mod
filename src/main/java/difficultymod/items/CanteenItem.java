@@ -8,27 +8,24 @@ import net.minecraft.world.World;
 
 public class CanteenItem extends DrinkableItem 
 {
-	public CanteenItem(String name, CreativeTabs creativeTab, int maxDamage)
+	public CanteenItem ( String name, CreativeTabs creativeTab, int maxDamage )
 	{
-		super(name, creativeTab);
-		this.setMaxDamage(maxDamage);
+		super ( name, creativeTab );
+		this.setMaxDamage ( maxDamage );
 	}
 	
 	@Override
-	public ItemStack onItemUseFinish(ItemStack stack, World world, EntityLivingBase entity)
+	public ItemStack onItemUseFinish ( ItemStack stack, World world, EntityLivingBase entity )
 	{
-		super.onItemUseFinish(stack, world, entity);
-		
-		EntityPlayer player = (EntityPlayer)entity;
-		
+		super.onItemUseFinish ( stack, world, entity );
+
 		// If in creative mode, don't actually apply durability effects.
-		if (player.isCreative()) return stack;
+		if ( ( (EntityPlayer) entity ).isCreative ( ) ) return stack;
 		
-		stack.setItemDamage(stack.getItemDamage()+1);
+		stack.setItemDamage ( stack.getItemDamage ( ) + 1 );
 		
 		// If the item is fully consumed, change back into empty.
-		if (stack.getItemDamage()==stack.getMaxDamage())
-			return GetConsumedItem();
+		if ( stack.getItemDamage ( ) == stack.getMaxDamage ( ) ) return GetConsumedItem ( );
 			
 		return stack;
 	}
