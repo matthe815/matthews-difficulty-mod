@@ -5,10 +5,8 @@ import javax.vecmath.Vector3d;
 import difficultymod.core.ConfigHandler;
 import difficultymod.core.DifficultyMod;
 import difficultymod.networking.ThirstUpdatePacket;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.DamageSource;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 
@@ -17,10 +15,9 @@ public class ThirstCapability implements IThirst
 	private Thirst thirst;
 	private Thirst lastThirst;
     
-    private int tickRate = ConfigHandler.common.thirstSettings.thirstTickRate;
     private EntityPlayer player;
     
-    private Vector3d movementVec;
+    private Vector3d movementVec = new Vector3d();
     
     /**Used to time the seconds passed since thirst damage was last dealt to the player*/
     private int thirstTimer;
@@ -63,6 +60,9 @@ public class ThirstCapability implements IThirst
 		this.thirst.thirst += thirst.thirst;
 		this.thirst.exhaustion += thirst.exhaustion;
 		this.thirst.hydration += thirst.hydration;
+		
+		if (thirst.thirst != 0)
+			this.onSendClientUpdate();
 	}
 
 	/**
@@ -70,10 +70,14 @@ public class ThirstCapability implements IThirst
 	 * @param thirst
 	 */
 	@Override
-	public void Remove(Thirst thirst) {
+	public void Remove(Thirst thirst) 
+	{
 		this.thirst.thirst -= thirst.thirst;
 		this.thirst.exhaustion -= thirst.exhaustion;
 		this.thirst.hydration -= thirst.hydration;
+		
+		if (thirst.thirst != 0)
+			this.onSendClientUpdate();
 	}
 	
 	@Override
@@ -85,7 +89,6 @@ public class ThirstCapability implements IThirst
 	@Override
 	public void onSendClientUpdate()
 	{
-		this.lastThirst.thirst = this.thirst.thirst;
 		DifficultyMod.network.sendTo(new ThirstUpdatePacket(this.Get()), (EntityPlayerMP) this.player);
 	}
 	
@@ -93,44 +96,47 @@ public class ThirstCapability implements IThirst
      * @param phase
      */
 	@Override
-    public void OnTick(Phase phase)
+    public void OnTick ( Phase phase )
     {
-		if (this.movementVec != null && phase == Phase.START) 
-		{
-			Vector3d movement = new Vector3d(player.posX, player.posY, player.posZ);
-			movement.sub(movementVec); movement.absolute();
-			int distance = (int)Math.round(movement.length() * 100.0F);
-			
-			if (distance > 0) applyMovementExhaustion(player, distance);
-			this.Add(new Thirst().SetExhaustion(0.8f / ConfigHandler.common.thirstSettings.secondsPerDroplet));
-			
-	    	if (player.world.getDifficulty() == EnumDifficulty.PEACEFUL) // Refill the thirst gauge on peaceful.
-	    		this.Add(new Thirst().SetThirst(1));	
-	    	
-	    	return;
-		}
-    	
-    	this.movementVec = new Vector3d(player.posX, player.posY, player.posZ);
-
-    	if (this.Get().exhaustion >= 20) this.Consume();
-    	
-    	if (this.Get().thirst <= 0) {
-        	this.Get().thirst = 0; // Keep at zero instead of further dropping.
+		// Check for potential tick damage.
+    	if ( this.Get( ).thirst <= 0 ) {
+        	this.thirstTimer ++;
         	
-        	this.thirstTimer++;
-        	
-        	if (thirstTimer > tickRate) {
+        	if ( thirstTimer > ConfigHandler.common.thirstSettings.thirstTickRate ) {
         		thirstTimer = 0;
-        		player.attackEntityFrom(DifficultyMod.SOURCE_THIRST, 1.0F);
-        	}	
+        		player.attackEntityFrom ( DifficultyMod.SOURCE_THIRST, 1.0F );
+        	}
+        	
+        	return;
     	}
     	
-        if (player.isSprinting() && this.Get().thirst <= 6)
-            player.setSprinting(false);
-        
-        if ( this.HasChanged ( ) ) 
-			this.onSendClientUpdate ();
+    	// Only run the movement exhaustion process on the start of a tick.
+    	switch (phase) {
+    	case START:
+    		OnTickStart();
+    	case END:
+        	this.movementVec = new Vector3d ( player.posX, player.posY, player.posZ );
+
+        	if ( this.Get( ).exhaustion >= 20 ) this.Consume(); // If exhausion is maxed, consume a bar.
+        	
+            if ( player.isSprinting ( ) && this.Get().thirst <= 6 )
+                player.setSprinting(false);	
+    	}
     }
+	
+	private void OnTickStart ()
+	{
+		Vector3d movement = new Vector3d ( player.posX, player.posY, player.posZ );
+		movement.sub ( movementVec ); movement.absolute ( );
+		int distance = (int) Math.round( movement.length( ) * 100.0F );
+		
+		if ( distance > 0 ) applyMovementExhaustion(player, distance);
+		
+		this.Add( new Thirst ( ).SetExhaustion ( 0.8f / ConfigHandler.common.thirstSettings.secondsPerDroplet ) ); // Consume a base exhaustion based on the specified duration.
+		
+    	if (player.world.getDifficulty() == EnumDifficulty.PEACEFUL) // Refill the thirst gauge on peaceful.
+    		this.Add(new Thirst().SetThirst(1));	
+	}
     
     public void Consume() {
     	// Apply a reduction in either thirst or hydration. Depending on what the player has.
@@ -141,23 +147,20 @@ public class ThirstCapability implements IThirst
     	);
 	}
 
-	public void applyJump(EntityPlayer player)
-    {
-		this.Add(new Thirst().SetExhaustion(0.15));
+	public void applyJump ( EntityPlayer player ) 
+	{
+		this.Add ( new Thirst().SetExhaustion (0.15 ) );
     }
     
-    private void applyMovementExhaustion(EntityPlayer player, int distance)
+    private void applyMovementExhaustion ( EntityPlayer player, int distance )
     {
-        if (player.isInsideOfMaterial(Material.WATER))
-            this.AddExhaustion(0.015F * (float)distance * 0.01F);
-        else if (player.isInWater())
-            this.AddExhaustion(0.015F * (float)distance * 0.01F);
-        else if (player.onGround) {
-            if (player.isSprinting())
-                this.AddExhaustion(0.099999994F * (float)distance * 0.01F);
-            else
-                this.AddExhaustion(0.01F * (float)distance * 0.01F);
-        }
+        if (player.isInWater())
+            this.Add( new Thirst ( ).SetExhaustion( 0.015F * (float) distance * 0.01F ) );
+        
+        if (!player.onGround) return;
+    
+        // Apply base movement penalty.
+        this.Add( new Thirst ( ).SetExhaustion( ( ( player.isSprinting( ) ) ? 0.09F : 0.01F) * (float) distance * 0.01F ) );
     }
     
 	/**
