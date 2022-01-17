@@ -96,6 +96,9 @@ public class StaminaCapability implements IStamina
 	 */
 	public boolean FireAction(String action, float defStamina) 
 	{
+		if (this.player == null || this.player.isCreative()) // Creative bypass.
+			return true;
+		
 		float requiredStamina = StaminaHelper.GetUsage(action) != 0 ? StaminaHelper.GetUsage(action) : defStamina;
 
 		//if (player.getActivePotionEffect(PotionInit.STAMINALESS)!=null) // Stop right here if the player has Staminaless.
