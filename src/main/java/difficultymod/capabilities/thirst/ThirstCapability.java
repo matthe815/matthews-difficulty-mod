@@ -29,7 +29,10 @@ public class ThirstCapability implements IThirst
     
     public void SetPlayer (EntityPlayer player)
     {
-    	this.player = player;
+    	if (this.player == null) {
+        	this.player = player;
+        	this.onSendClientUpdate();
+    	}
     }
     
     /**

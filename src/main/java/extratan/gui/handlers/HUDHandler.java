@@ -83,17 +83,36 @@ public class HUDHandler
 		
 		float maxExhaustion = stamina.Get().GetMaxStamina(mc.player);
 		float ratio = stamina.Get().stamina / maxExhaustion;
-		int width = (int) (ratio * 30);
+		
+		int barMaxWidth = 30; // Used for length calculations.
+		
 		int height = 6;
 		int startY = top;
 		
 		if ((ratio*60) <= 20 && updateCounter % (4 * 3 + 1) == 0)
             startY = top + (random.nextInt(3) - 1);
 
-		enableAlpha(.75f);
-		mc.ingameGUI.drawTexturedModalRect(left - 30+4-1, ConfigHandler.client.useOldGUI ? startY-10 : startY-1, 81 - 30, 54, 32, (height+2)-4);
-		mc.ingameGUI.drawTexturedModalRect(left - width+4, ConfigHandler.client.useOldGUI ? startY-9 : startY, 81 - width, 45, width, height-4);
-		disableAlpha(.75f);
+		enableAlpha(.65f);
+		
+		mc.ingameGUI.drawTexturedModalRect(left - barMaxWidth + 4 - 1, startY-10, 81 - barMaxWidth, 54, barMaxWidth + 2, ( height + 2 ) - 4);
+		
+		double drawWidth = stamina.Get().stamina;
+		int drawTimes = 0;
+		
+		while (drawWidth > 0) {
+			double drawRatio = (drawWidth > 100 ? 100 : drawWidth) / 100;
+			int width = (int) (drawWidth > 100 ? 30 : drawRatio * 30);
+			
+			drawWidth -= 100;
+			
+			GlStateManager.color(0.5f + (0.1f * ( drawTimes + 1 )), 0.1f * ( drawTimes + 1 ), 0.1f * ( drawTimes + 1 ));
+			mc.ingameGUI.drawTexturedModalRect(left - width + 4, startY-9, 81 - width, 45, width, height - 4 );
+			GlStateManager.resetColor();
+			
+			drawTimes ++;
+		}
+		
+		disableAlpha(.65f);
 
 		// rebind default icons
 		mc.getTextureManager().bindTexture(Gui.ICONS);

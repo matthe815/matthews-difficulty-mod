@@ -24,7 +24,7 @@ public class Stamina {
 		FoodStats stats = player.getFoodStats();
 		boolean staminaless = player.getActivePotionEffect(PotionInit.STAMINALESS) != null ? true : false;
 		
-		return staminaless ? StaminaCapability.staminaCaps[stats.getFoodLevel()]*2 : StaminaCapability.staminaCaps[stats.getFoodLevel()];
+		return (staminaless ? StaminaCapability.staminaCaps[stats.getFoodLevel()]*2 : StaminaCapability.staminaCaps[stats.getFoodLevel()]);
 	}
 	
 }

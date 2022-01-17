@@ -106,7 +106,7 @@ public class TemperatureCapability implements ITemperature
 		if (player == null || player.isCreative() || ConfigHandler.common.temperatureSettings.disableTemperature || player.getActivePotionEffect ( PotionInit.TEMPERATURE_IMMUNITY ) != null)
 			return Temperature.NORMAL;
 		
-		float temp = player.world.getBiome(player.getPosition()).getTemperature(player.getPosition())*10+2.4f;
+		float temp = player.world.getBiome(player.getPosition()).getTemperature(player.getPosition())*10+3.4f;
 		
 		if (ConfigHandler.Debug_Options.showUpdateMessages)
 			System.out.println(player.world.getBiome(player.getPosition()).getBiomeName() + ": " + temp);

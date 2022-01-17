@@ -20,6 +20,8 @@ public class StaminaCapability implements IStamina
 	private Stamina stamina = new Stamina().SetStamina(100);
 	private float lastStamina = 0;
 	
+	private int staminaRechargeTick = 0;
+	
 	private EntityPlayer player;
 	
 	public static float[] regenRates = new float[] {0, 0, 0, 0, 0, 0, 0, 0, 0.01F, 0.05F, 0.07F, 0.1F, 0.12F, 0.13F, 0.15F, 0.17F, 0.19F, 0.20F, 0.22F, 0.25F, 0.30F};
@@ -67,6 +69,11 @@ public class StaminaCapability implements IStamina
 	{
 		stamina.stamina += value.stamina;
 	}
+	
+	public int GetStaminaHoldTick ()
+	{
+		return this.staminaRechargeTick;
+	}
 
 	@Override
 	public void Remove(Stamina value) 
@@ -96,6 +103,7 @@ public class StaminaCapability implements IStamina
 		
 		if (this.stamina.stamina >= requiredStamina) {
 			this.stamina.stamina-=requiredStamina;
+			staminaRechargeTick = 40;
 			return true;
 		}
 		
@@ -137,6 +145,9 @@ public class StaminaCapability implements IStamina
 			
 			return; // Halt stamina regeneration process if running.
 		}
+		
+		this.staminaRechargeTick --; // Wait for the stamina recharge tick.
+		if (this.staminaRechargeTick > 0) return;
 
 		this.stamina.stamina = Math.min(this.stamina.stamina, this.stamina.GetMaxStamina(player)); // Prevent stamina from exceeding max.
 		this.Add(new Stamina().SetStamina(this.GetRegenerationRate()));
