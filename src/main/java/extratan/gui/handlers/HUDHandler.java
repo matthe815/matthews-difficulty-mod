@@ -80,8 +80,8 @@ public class HUDHandler
 		double drawWidth = stamina.Get().stamina; int drawTimes = 0;
 		
 		while ( drawWidth > 0 ) { // Begin drawing bars one after another.
-			double drawRatio = (drawWidth > 100 ? 100 : drawWidth) / 100;
-			int width = (int) (drawWidth > 100 ? barMaxWidth : drawRatio * barMaxWidth); // Determine the actual width for drawing the bar.
+			double drawRatio = Math.min(drawWidth, 100) / 100;
+			int width = (int) ( ( drawWidth > 100 ) ? barMaxWidth : drawRatio * barMaxWidth); // Determine the actual width for drawing the bar.
 			
 			drawWidth -= 100; // Deincrement the drawable range.
 			
