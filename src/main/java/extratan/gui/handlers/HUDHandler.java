@@ -2,7 +2,6 @@ package extratan.gui.handlers;
 
 import java.util.Random;
 
-import org.lwjgl.opengl.GL11;
 import difficultymod.api.stamina.StaminaHelper;
 import difficultymod.capabilities.stamina.StaminaCapability;
 import difficultymod.core.ConfigHandler;
@@ -11,10 +10,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
-import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -27,7 +24,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class HUDHandler 
 {
-	protected int offset;
 	protected int disappearTicks = 0;
 	
     private final static Random random = new Random();
@@ -47,97 +43,57 @@ public class HUDHandler
 	@SubscribeEvent(priority=EventPriority.LOW)
 	public void onPreRender(RenderGameOverlayEvent.Pre event)
 	{
-		if (ConfigHandler.common.staminaSettings.disableStamina)
-			return;
-		
-		if (event.getType() != ElementType.AIR)
-			return;
-		
-		offset = GuiIngameForge.right_height;
-		
-		if (event.isCanceled())
-			return;
-		
-		Minecraft mc = Minecraft.getMinecraft();
-		EntityPlayer player = mc.player;
-		
-		ScaledResolution scale = event.getResolution();
-		
-		int left = scale.getScaledWidth() / 2 + 27;
-		int top = (scale.getScaledHeight() / 2) + 20;
+		if ( ConfigHandler.common.staminaSettings.disableStamina ) return; // Handle disabled stamina.
+		if ( event.getType ( ) != ElementType.AIR ) return; // Only render on the air handler.
+		if ( event.isCanceled ( ) ) return; // Do not proceed if cancelled.
 
-		StaminaCapability stamina = StaminaHelper.GetPlayer(player);
+		Minecraft mc = Minecraft.getMinecraft ( );
+		ScaledResolution scale = event.getResolution ( );
 		
-		if (stamina.Get().stamina < stamina.Get().GetMaxStamina(player))
-			disappearTicks=0;
+		int left = scale.getScaledWidth ( ) / 2 + 27;
+		int top = ( scale.getScaledHeight ( ) / 2 ) + 20;
+
+		StaminaCapability stamina = StaminaHelper.GetPlayer ( mc.player );
 		
-		disappearTicks++;
+		if ( stamina.Get( ).stamina < stamina.Get( ).GetMaxStamina ( mc.player ) ) disappearTicks = 0; // When there's stamina depleted, reset the disappear ticks.
 		
-		if (disappearTicks<150)
-			drawStamina(stamina, mc, left-15, top, 1);
+		disappearTicks ++;
+		
+		if ( disappearTicks < 150 )
+			drawStamina ( stamina, mc, left-15, top );
 	}
 	
-	public static void drawStamina (StaminaCapability stamina, Minecraft mc, int left, int top, float alpha)
+	public static void drawStamina ( StaminaCapability stamina, Minecraft mc, int left, int top )
 	{
-		mc.getTextureManager().bindTexture(icons);
+		mc.getTextureManager().bindTexture ( icons ); // Bind the icon textures
 		
-		float maxExhaustion = stamina.Get().GetMaxStamina(mc.player);
+		float maxExhaustion = stamina.Get().GetMaxStamina ( mc.player );
 		float ratio = stamina.Get().stamina / maxExhaustion;
-		
-		int barMaxWidth = 30; // Used for length calculations.
-		
-		int height = 6;
+		int barMaxWidth = Math.min(30, (int) maxExhaustion / 4); // Used for length calculations.
 		int startY = top;
 		
-		if ((ratio*60) <= 20 && updateCounter % (4 * 3 + 1) == 0)
-            startY = top + (random.nextInt(3) - 1);
-
-		enableAlpha(.65f);
+		if ( ( ratio * 60 ) <= 20 && updateCounter % ( 4 * 3 + 1 ) == 0 ) startY = top + ( random.nextInt ( 3 ) - 1 ); // Randomly decide on a new position for the vibrations.
 		
-		mc.ingameGUI.drawTexturedModalRect(left - barMaxWidth + 4 - 1, startY-10, 81 - barMaxWidth, 54, barMaxWidth + 2, ( height + 2 ) - 4);
+		mc.ingameGUI.drawTexturedModalRect ( // Draw the background for the bar.
+				left - ( barMaxWidth + ( ( 30 - barMaxWidth ) / 2 ) ) + 4 - 1, startY - 10, 81 - barMaxWidth, 54, barMaxWidth + 2, 4 );
 		
-		double drawWidth = stamina.Get().stamina;
-		int drawTimes = 0;
+		double drawWidth = stamina.Get().stamina; int drawTimes = 0;
 		
-		while (drawWidth > 0) {
+		while ( drawWidth > 0 ) { // Begin drawing bars one after another.
 			double drawRatio = (drawWidth > 100 ? 100 : drawWidth) / 100;
-			int width = (int) (drawWidth > 100 ? 30 : drawRatio * 30);
+			int width = (int) (drawWidth > 100 ? barMaxWidth : drawRatio * barMaxWidth); // Determine the actual width for drawing the bar.
 			
-			drawWidth -= 100;
+			drawWidth -= 100; // Deincrement the drawable range.
 			
-			GlStateManager.color(0.5f + (0.1f * ( drawTimes + 1 )), 0.1f * ( drawTimes + 1 ), 0.1f * ( drawTimes + 1 ));
-			mc.ingameGUI.drawTexturedModalRect(left - width + 4, startY-9, 81 - width, 45, width, height - 4 );
+			GlStateManager.color(0.5f + (0.1f * ( drawTimes + 1 )), 0.2f * ( drawTimes + 1 ), 0.1f * ( drawTimes + 1 ), 0.65f); // Apply a dynamic color.
+			mc.ingameGUI.drawTexturedModalRect( left - (width + ( ( 30 - barMaxWidth ) / 2 ) ) + 4, startY - 9, 81 - width, 45, width, 2 );
 			GlStateManager.resetColor();
 			
 			drawTimes ++;
 		}
 		
-		disableAlpha(.65f);
-
-		// rebind default icons
-		mc.getTextureManager().bindTexture(Gui.ICONS);
+		GlStateManager.color(1, 1, 1, 1);
+		mc.getTextureManager().bindTexture(Gui.ICONS); // rebind default icons
 	}
-	
-    public static void enableAlpha(float alpha)
-	{
-		GlStateManager.enableBlend();
-
-		if (alpha == 1f)
-			return;
-
-		GlStateManager.color(1.0F, 1.0F, 1.0F, alpha);
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-	}
-
-	public static void disableAlpha(float alpha)
-	{
-		GlStateManager.disableBlend();
-
-		if (alpha == 1f)
-			return;
-
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-	}
-
 	
 }

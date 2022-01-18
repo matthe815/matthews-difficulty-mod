@@ -12,9 +12,6 @@ public class ConfigHandler {
 	public static Common common = new Common();
 	
 	public static class Client {
-		@Name("Use TAN-esque GUI")
-		@Comment(value = { "Alters the dimensions of certain UI elements to reflect that of TAN's UI.", "DEFAULT: FALSE" })
-		public boolean useOldGUI = true;
 	}
 	
 	public static class Common {

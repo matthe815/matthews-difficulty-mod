@@ -89,12 +89,7 @@ public class GUIController {
         int              height     = resolution.getScaledHeight();
         ThirstCapability thirst     = (ThirstCapability)player.getCapability(ThirstProvider.THIRST, null);
         
-		if (event.getType().equals(ElementType.FOOD) && !ConfigHandler.client.useOldGUI) {
-			event.setCanceled(true);
-		    createGUIChunkBar(width, height+4, 0, 36, player.getFoodStats().getFoodLevel(), player.getFoodStats().getSaturationLevel(), 20);
-		}
-		
-        createGUIChunkBar(width + (!ConfigHandler.client.useOldGUI ? 10 : 0), height+5, 0, (!ConfigHandler.client.useOldGUI) ? 16 : 25, thirst.Get().thirst, (float)thirst.Get().hydration, thirst.Get().GetMaxThirst());
+        createGUIChunkBar(width, height+5, 0, 25, thirst.Get().thirst, (float)thirst.Get().hydration, thirst.Get().GetMaxThirst());
     	GuiIngameForge.right_height += 12; // Increment the right height.
 	}
 	

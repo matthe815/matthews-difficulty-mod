@@ -101,8 +101,8 @@ public class StaminaCapability implements IStamina
 		
 		float requiredStamina = StaminaHelper.GetUsage(action) != 0 ? StaminaHelper.GetUsage(action) : defStamina;
 
-		//if (player.getActivePotionEffect(PotionInit.STAMINALESS)!=null) // Stop right here if the player has Staminaless.
-		//	return true;
+		if (player.getActivePotionEffect(PotionInit.STAMINALESS)!=null) // Stop right here if the player has Staminaless.
+			return true;
 		
 		if (this.stamina.stamina >= requiredStamina) {
 			this.stamina.stamina-=requiredStamina;
@@ -139,7 +139,7 @@ public class StaminaCapability implements IStamina
 		if (ConfigHandler.common.staminaSettings.disableStamina || (ConfigHandler.common.staminaSettings.disableStaminaDuringPeaceful && player.world.getDifficulty() == EnumDifficulty.PEACEFUL))
 			return;
 		
-		if (player.isSprinting() && !player.isCreative())
+		if (player.isSprinting())
 		{
 			if (!FireAction(ActionType.RUNNING, 0.33f)) // If running fails to occur, cancel running.
 			{
