@@ -25,7 +25,6 @@ public class DrinkableItem extends ItemBucketMilk implements IBottledConsumable 
 			.setRegistryName(name)
 			.setCreativeTab(creativeTab);
 		
-		setMaxDamage(5);
 		RegisterHandler.AddItem(this);
 	}
 	

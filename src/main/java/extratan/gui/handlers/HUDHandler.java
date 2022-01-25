@@ -55,7 +55,7 @@ public class HUDHandler
 
 		StaminaCapability stamina = StaminaHelper.GetPlayer ( mc.player );
 		
-		if ( stamina.Get( ).stamina < stamina.Get( ).GetMaxStamina ( mc.player ) ) disappearTicks = 0; // When there's stamina depleted, reset the disappear ticks.
+		if ( stamina.Get( ).GetTotalStamina() != stamina.Get( ).GetMaxStamina ( mc.player ) ) disappearTicks = 0; // When there's stamina depleted, reset the disappear ticks.
 		
 		disappearTicks ++;
 		
@@ -68,8 +68,8 @@ public class HUDHandler
 		mc.getTextureManager().bindTexture ( icons ); // Bind the icon textures
 		
 		float maxExhaustion = stamina.Get().GetMaxStamina ( mc.player );
-		float ratio = stamina.Get().stamina / maxExhaustion;
-		int barMaxWidth = Math.min(30, (int) maxExhaustion / 4); // Used for length calculations.
+		float ratio = stamina.Get().GetTotalStamina() / maxExhaustion;
+		int barMaxWidth = (int) maxExhaustion / 4; // Used for length calculations.
 		int startY = top;
 		
 		if ( ( ratio * 60 ) <= 20 && updateCounter % ( 4 * 3 + 1 ) == 0 ) startY = top + ( random.nextInt ( 3 ) - 1 ); // Randomly decide on a new position for the vibrations.
@@ -77,13 +77,13 @@ public class HUDHandler
 		mc.ingameGUI.drawTexturedModalRect ( // Draw the background for the bar.
 				left - ( barMaxWidth + ( ( 30 - barMaxWidth ) / 2 ) ) + 4 - 1, startY - 10, 81 - barMaxWidth, 54, barMaxWidth + 2, 4 );
 		
-		double drawWidth = stamina.Get().stamina; int drawTimes = 0;
-		
+		double drawWidth = stamina.Get().GetTotalStamina(); int drawTimes = 0;
+
 		while ( drawWidth > 0 ) { // Begin drawing bars one after another.
-			double drawRatio = Math.min(drawWidth, 100) / 100;
-			int width = (int) ( ( drawWidth > 100 ) ? barMaxWidth : drawRatio * barMaxWidth); // Determine the actual width for drawing the bar.
+			double drawRatio = Math.min(drawWidth, maxExhaustion) / maxExhaustion;
+			int width = (int) ( ( drawWidth > 100 ) ? barMaxWidth : barMaxWidth * drawRatio); // Determine the actual width for drawing the bar.
 			
-			drawWidth -= 100; // Deincrement the drawable range.
+			drawWidth -= Math.min(maxExhaustion, 100); // Deincrement the drawable range.
 			
 			GlStateManager.color(0.5f + (0.1f * ( drawTimes + 1 )), 0.2f * ( drawTimes + 1 ), 0.1f * ( drawTimes + 1 ), 0.65f); // Apply a dynamic color.
 			mc.ingameGUI.drawTexturedModalRect( left - (width + ( ( 30 - barMaxWidth ) / 2 ) ) + 4, startY - 9, 81 - width, 45, width, 2 );

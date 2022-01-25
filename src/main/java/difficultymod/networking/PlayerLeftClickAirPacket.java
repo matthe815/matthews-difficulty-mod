@@ -1,11 +1,9 @@
 package difficultymod.networking;
 
-import difficultymod.capabilities.stamina.Stamina;
-import difficultymod.capabilities.stamina.StaminaCapability;
-import difficultymod.capabilities.stamina.StaminaProvider;
 import difficultymod.core.ConfigHandler;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -35,12 +33,11 @@ public class PlayerLeftClickAirPacket implements IMessage {
 	    		System.out.println("Got client left-click air message.");
 	    	
 	    	if (ctx.side == Side.SERVER) {
-	    		if (!Minecraft.getMinecraft().player.hasCapability(StaminaProvider.STAMINA, null))
-	    			return null;
+	    		RayTraceResult result = ctx.getServerHandler().player.rayTrace(2.0, 1.0f);
 	    		
-	    		StaminaCapability stamina = (StaminaCapability)Minecraft.getMinecraft().player.getCapability(StaminaProvider.STAMINA, null);
-	    		
-	    		stamina.Remove(new Stamina().SetStamina(-5));
+	    		if (ctx.getServerHandler().player.world.getBlockState(result.getBlockPos()).getBlock() == Blocks.WATER) {
+	    			System.out.println("Right clicked water");
+	    		}
 	    	}
 	    		return null;
 	    }

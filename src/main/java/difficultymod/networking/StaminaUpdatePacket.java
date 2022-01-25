@@ -14,6 +14,8 @@ import net.minecraftforge.fml.relauncher.Side;
 public class StaminaUpdatePacket implements IMessage {
 
 	  private float stamina;
+	  private float extraStamina;
+	  private float fitness;
 
 	  public StaminaUpdatePacket() {
 
@@ -25,18 +27,24 @@ public class StaminaUpdatePacket implements IMessage {
 			  System.out.println(stamina.stamina);
 		  
 		  this.stamina = stamina.stamina;
+		  this.extraStamina = stamina.extraStamina;
+		  this.fitness = stamina.fitness;
 	  }
 
 	  @Override
 	  public void fromBytes(ByteBuf buf) 
 	  {
 		  this.stamina = buf.readFloat();
+		  this.extraStamina = buf.readFloat();
+		  this.fitness = buf.readFloat();
 	  }
 
 	  @Override
 	  public void toBytes(ByteBuf buf) 
 	  {
 		  buf.writeFloat(this.stamina);
+		  buf.writeFloat(this.extraStamina);
+		  buf.writeFloat(this.fitness);
 	  }
 
 	  public static class Handler implements IMessageHandler<StaminaUpdatePacket, IMessage> {
@@ -53,7 +61,7 @@ public class StaminaUpdatePacket implements IMessage {
 	    		if (ConfigHandler.Debug_Options.showPacketMessages)
 	    			System.out.println(message.stamina);
 	    		
-	    		stamina.Set(new Stamina().SetStamina(message.stamina));
+	    		stamina.Set(new Stamina().SetStamina(message.stamina).SetExtraStamina(message.extraStamina).SetFitness(message.fitness));
 	    	}
 	    		return null;
 	    }

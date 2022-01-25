@@ -67,7 +67,21 @@ public class StaminaCapability implements IStamina
 	@Override
 	public void Add(Stamina value) 
 	{
+		float untilMax = stamina.GetMaxStamina(this.player) - stamina.stamina;
+		stamina.stamina += Math.min(value.stamina, untilMax);
+		value.stamina -= untilMax;
+		
+		if (value.stamina > 0) stamina.extraStamina += value.stamina;
+		this.stamina.fitness += value.fitness;
+		
+		onSendClientUpdate();
+	}
+	
+	public void AddDirect(Stamina value) 
+	{
 		stamina.stamina += value.stamina;
+	
+		onSendClientUpdate();
 	}
 	
 	public int GetStaminaHoldTick ()
@@ -83,7 +97,14 @@ public class StaminaCapability implements IStamina
 			System.out.println(this.stamina.stamina);	
 		}
 		
-		this.stamina.stamina -= value.stamina;
+		// Use extra stamina for main stamina.
+		if (this.stamina.extraStamina > 0)
+		this.stamina.extraStamina -= value.stamina;
+		else this.stamina.stamina -= value.stamina;
+		
+		this.stamina.fitness -= value.fitness;
+		
+		onSendClientUpdate();
 	}
 	
 	public void SetPlayer (EntityPlayer player)
@@ -104,8 +125,10 @@ public class StaminaCapability implements IStamina
 		if (player.getActivePotionEffect(PotionInit.STAMINALESS)!=null) // Stop right here if the player has Staminaless.
 			return true;
 		
+		System.out.println(this.stamina.fitness);
+		
 		if (this.stamina.stamina >= requiredStamina) {
-			this.stamina.stamina-=requiredStamina;
+			this.Remove(new Stamina ().SetStamina ( requiredStamina ).SetFitness( - ( requiredStamina / 170 ) ) );
 			staminaRechargeTick = 40;
 			return true;
 		}
@@ -153,18 +176,17 @@ public class StaminaCapability implements IStamina
 		if (this.staminaRechargeTick > 0) return;
 
 		this.stamina.stamina = Math.min(this.stamina.stamina, this.stamina.GetMaxStamina(player)); // Prevent stamina from exceeding max.
-		this.Add(new Stamina().SetStamina(this.GetRegenerationRate()));
+		this.AddDirect( new Stamina( ).SetStamina( this.GetRegenerationRate() * 1.5f ) );
 	}
 
 	public boolean HasChanged() 
 	{
 		return lastStamina != Get().stamina;
 	}
-
+	
 	public void onSendClientUpdate() 
 	{
-		lastStamina = stamina.stamina;
-		DifficultyMod.network.sendTo(new StaminaUpdatePacket(Get()), (EntityPlayerMP)player);
+		DifficultyMod.network.sendTo(new StaminaUpdatePacket(Get()), (EntityPlayerMP) player);
 	}
 
 }

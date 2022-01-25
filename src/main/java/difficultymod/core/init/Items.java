@@ -106,13 +106,29 @@ public class Items {
 	
 	public static final ArmorItem WET_CHESTPLATE = new ArmorItem("wetChest", DifficultyMod.wet_material, EntityEquipmentSlot.CHEST);
 	
-	public static final ArmorItem WOOL_BOOTS = new ArmorItem("woolBoots", DifficultyMod.wool_material, EntityEquipmentSlot.FEET);
+	public static final ArmorItem WOOL_BOOTS = new ArmorItem("woolBoots", DifficultyMod.wool_material, EntityEquipmentSlot.FEET) {
+		public float GetWarmth() {
+			return 0.4f;
+		};
+	};
 	
-	public static final ArmorItem WOOL_CHESTPLATE = new ArmorItem("woolShirt", DifficultyMod.wool_material, EntityEquipmentSlot.CHEST);
+	public static final ArmorItem WOOL_CHESTPLATE = new ArmorItem("woolShirt", DifficultyMod.wool_material, EntityEquipmentSlot.CHEST) {
+		public float GetWarmth() {
+			return 0.9f;
+		};
+	};
 	
-	public static final ArmorItem WOOL_LEGGINGS = new ArmorItem("woolPants", DifficultyMod.wool_material, EntityEquipmentSlot.LEGS);
+	public static final ArmorItem WOOL_LEGGINGS = new ArmorItem("woolPants", DifficultyMod.wool_material, EntityEquipmentSlot.LEGS) {
+		public float GetWarmth() {
+			return 0.7f;
+		};
+	};
 	
-	public static final ArmorItem WOOL_HAT = new ArmorItem("woolHat", DifficultyMod.wool_material, EntityEquipmentSlot.HEAD);
+	public static final ArmorItem WOOL_HAT = new ArmorItem("woolHat", DifficultyMod.wool_material, EntityEquipmentSlot.HEAD) {
+		public float GetWarmth() {
+			return 0.4f;
+		};
+	};
 	
 	public static void init ()
 	{	

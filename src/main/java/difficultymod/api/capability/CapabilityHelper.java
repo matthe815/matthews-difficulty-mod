@@ -24,6 +24,8 @@ public class CapabilityHelper {
 	}
 	
 	public static IStamina GetStamina (EntityPlayer player) {
+		if ((ConfigHandler.common.staminaSettings.disableStamina) || !player.hasCapability ( StaminaProvider.STAMINA, null )) return null;
+		
 		StaminaCapability stamina = (StaminaCapability) player.getCapability ( StaminaProvider.STAMINA, null );
 		stamina.SetPlayer(player);
 		
@@ -31,6 +33,8 @@ public class CapabilityHelper {
 	}
 	
 	public static ITemperature GetTemperature (EntityPlayer player) {
+		if ((ConfigHandler.common.temperatureSettings.disableTemperature) || !player.hasCapability ( TemperatureProvider.TEMPERATURE, null )) return null;
+		
 		TemperatureCapability temperature = (TemperatureCapability) player.getCapability ( TemperatureProvider.TEMPERATURE, null );
 		temperature.SetPlayer(player);
 		

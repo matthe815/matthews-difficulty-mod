@@ -145,17 +145,26 @@ public class GUIController {
 	private void drawTemperature (TemperatureCapability temperature, Minecraft mc, ScaledResolution scale)
 	{
 		temperature.SetPlayer(mc.player);
+		double renderPercent = 1.0;
 		
-		switch (temperature.Get()) {
+		switch (temperature.DetermineVariableIntensity( temperature.GetTargetTemperature() )) {
 		case FREEZING:
-			renderVignette(mc, scale, 0, 0, 255);
+			renderVignette(mc, scale, 0, 0, (float) (255 * renderPercent));
 			break;
 			
+		case COLD:
+			renderVignette(mc, scale, 0, 0, (float) (155F * renderPercent));
+			break;
+			
+		case HOT:
+			renderVignette(mc, scale, (float) (155 * renderPercent), 0, 0);
+			
 		case BURNING:
-			renderVignette(mc, scale, 255, 0, 0);
+			renderVignette(mc, scale, (float) (255 * renderPercent), 0, 0);
 			break;
 			
 		default:
+			temperature.tempBuildup = 0;
 			break;
 		}
 	}
