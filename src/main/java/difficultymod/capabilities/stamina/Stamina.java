@@ -4,6 +4,10 @@ import difficultymod.core.init.PotionInit;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.FoodStats;
 
+/**
+ * Global stamina-builder class. Uses a series of setters to create a stamina component.
+ * @author Matthew
+ */
 public class Stamina {
 
 	public float stamina;
@@ -13,6 +17,10 @@ public class Stamina {
 	
 	public Stamina () {}
 	
+	/**
+	 * Get total current stamina + extra stamina.
+	 * @return The combined total
+	 */
 	public float GetTotalStamina ()
 	{
 		return stamina + extraStamina;
@@ -37,7 +45,9 @@ public class Stamina {
 	}
 	
 	/**
-	 * Get the player's max stamina.
+	 * Get the player's max stamina based on fitness and extra stamina on top of hunger.
+	 * @param player Player to base hunger from.
+	 * @return The current maximum stamina.
 	 */
 	public float GetMaxStamina(EntityPlayer player) 
 	{

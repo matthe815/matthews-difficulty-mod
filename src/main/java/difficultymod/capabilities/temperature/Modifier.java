@@ -1,5 +1,10 @@
 package difficultymod.capabilities.temperature;
 
+/**
+ * The gateway into modifying temperature values. Modifiers push temperature in a specified direction for a temporary time.
+ * @author Matthew
+ *
+ */
 public class Modifier {
 
 	private int ticks=-1;
@@ -22,7 +27,7 @@ public class Modifier {
 	
 	/**
 	 * Get the reference ID for the modifier.
-	 * @return
+	 * @return The modifier ID.
 	 */
 	public String GetID () {
 		return this.id;
@@ -30,7 +35,7 @@ public class Modifier {
 	
 	/**
 	 * Get the remaining ticks for the modifier.
-	 * @return
+	 * @return The total time remaining
 	 */
 	public int GetRemainingTicks () {
 		return this.ticks;
@@ -38,7 +43,7 @@ public class Modifier {
 	
 	/**
 	 * Get the amount of points the modifier deviates.
-	 * @return
+	 * @return The modifier deviance
 	 */
 	public double GetDeviance () {
 		return this.deviance;

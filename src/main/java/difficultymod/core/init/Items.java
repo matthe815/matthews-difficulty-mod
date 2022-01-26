@@ -137,18 +137,12 @@ public class Items {
 		}
 	}
 	
-	/**
-	 * Add a group of items.
-	 */
 	public static void AddItems(Item[] items)
 	{
 		for (Item item : items)
 			RegisterHandler.AddItem(item);
 	}
-	
-	/**
-	 * Add a group of blocks.
-	 */
+
 	public static void AddBlocks(Block[] blocks)
 	{
 		for (Block block : blocks)

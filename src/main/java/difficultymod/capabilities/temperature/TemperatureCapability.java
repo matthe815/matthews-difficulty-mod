@@ -57,13 +57,16 @@ public class TemperatureCapability implements ITemperature
 
 	/**
 	 * Retrieve the temperature penalty as result of a player's armor.
+	 * @param player The player.
+	 * @return The total penalty as a result of armor.
 	 */
 	@Override
-	public float GetPlayerArmorPenalty(EntityPlayer player) {
+	public float GetPlayerArmorPenalty ( EntityPlayer player ) 
+	{
 		float temp = 0;
 
-		for (ItemStack stack : player.getArmorInventoryList()) {
-			if (stack.getItem() instanceof TemperatureArmor)
+		for ( ItemStack stack : player.getArmorInventoryList ( ) ) {
+			if ( stack.getItem() instanceof TemperatureArmor )
 				temp += ( (TemperatureArmor) stack.getItem() ).GetWarmth() + 0.2f;
 			else
 				temp += 0.2f;
@@ -87,29 +90,29 @@ public class TemperatureCapability implements ITemperature
 		return temp;
 	}
 
-	
+	@Override
 	public Modifier [ ] GetModifiers () {
 		return modifiers.values().toArray ( new Modifier [ 0 ] );
 	}
 	
 	/**
 	 * Add a modifier to the player.
-	 * @param modifier
+	 * @param modifier The modifier to add.
 	 */
+	@Override
 	public void Add (Modifier modifier) {
 		modifiers.put(modifier.GetID(), modifier);
-	}
-	
-	private float GetImmunityTemperature ( ) {
-		float temp = player.world.getBiome( player.world.getSpawnPoint() ).getTemperature( player.world.getSpawnPoint() ) * 10;
-
-		return 10 - temp;
 	}
 	
 	private boolean IsWetAtPosition ( ) {
 		return player.isInWater ( ) || player.world.isRainingAt ( player.getPosition ( ) );
 	}
 	
+	/**
+	 * Get the target temperature for the player.
+	 * @return The target temperature.
+	 */
+	@Override
 	public float GetTargetTemperature ( ) {
 		float temp = Math.max( ( player.world.getBiome( player.getPosition( ) ).getTemperature( player.getPosition() ) * 10 ) + 3.2f, 6 );
 		
@@ -145,7 +148,7 @@ public class TemperatureCapability implements ITemperature
 
 	/**
 	 * Get the current temperature with modifiers applied.
-	 * @return
+	 * @return Current Temperature
 	 */
 	@Override
 	public Temperature Get() {
@@ -192,8 +195,6 @@ public class TemperatureCapability implements ITemperature
 	}
 
 	@Override
-	public void OnTick(Phase phase) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void OnTick(Phase phase) {}
+	
 }

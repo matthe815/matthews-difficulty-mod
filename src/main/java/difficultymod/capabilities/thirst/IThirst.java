@@ -9,14 +9,16 @@ public interface IThirst extends IBaseCapability
 	public Thirst Get ();
 	
 	public void OnTick(Phase phase);
+	
 	/**
 	 * Remove values from the current thirst stats.
-	 * @param thirst
+	 * @param thirst The thirst builder.
 	 */
 	void Remove(Thirst thirst);
 	/**
 	 * Add values to the current thirst stats.
-	 * @param thirst
+	 * @param thirst The thirst builder.
 	 */
+	
 	void Add(Thirst thirst);
 }

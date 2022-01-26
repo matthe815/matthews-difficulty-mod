@@ -9,9 +9,9 @@ public class EnchantmentHelper {
 
 	/**
 	 * Check if the player has specified enchantment on any of the gear.
-	 * @param player
-	 * @param id
-	 * @return
+	 * @param player The player to check for an enchantment.
+	 * @param id The ID of the enchantment to check for.
+	 * @return Whether or not the enchantment is applied to any armor.
 	 */
 	public static boolean PlayerHasEnchantment (EntityPlayer player, int id) {
 		for (ItemStack item : player.getArmorInventoryList()) {

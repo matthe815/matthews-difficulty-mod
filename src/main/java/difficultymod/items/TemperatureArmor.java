@@ -9,13 +9,13 @@ public abstract class TemperatureArmor extends ItemArmor {
 
 	/**
 	 * The effect on body temperature when worn.
-	 * @return
+	 * @return The warmth value of the armor.
 	 */
 	public abstract float GetWarmth();
 	
 	/**
 	 * Whether or not the item has the opposite effect when in water.
-	 * @return
+	 * @return The drenchability.
 	 */
 	public abstract boolean IsDrenchable();
 	

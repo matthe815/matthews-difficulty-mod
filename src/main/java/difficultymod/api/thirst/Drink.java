@@ -15,10 +15,10 @@ public class Drink
 	
 	/**
 	 * Register a brand new drink into the system using the provided ResourceLocation and value.
-	 * @param location
-	 * @param value
+	 * @param location The resource location to register the drink to.
+	 * @param value The supplied value of the drink.
 	 */
-	public Drink(ResourceLocation location, int value)
+	public Drink ( ResourceLocation location, int value )
 	{
 		this.location = location;
 		this.value = value;
@@ -26,7 +26,7 @@ public class Drink
 	
 	/**
 	 * Retrieve a string form of the ResourceLocation.
-	 * @return
+	 * @return The stringified ID
 	 */
 	public String GetItemID()
 	{
@@ -35,7 +35,7 @@ public class Drink
 	
 	/**
 	 * Retrieve the provided ResourceLocation from the drink.
-	 * @return
+	 * @return The resource location.
 	 */
 	public ResourceLocation GetResourceLocation()
 	{
@@ -44,7 +44,7 @@ public class Drink
 	
 	/**
 	 * Retrieve how much thirst is lost/recovered from drinking that.
-	 * @return
+	 * @return The total thirst supplied.
 	 */
 	public int GetThirstValue()
 	{
@@ -53,7 +53,7 @@ public class Drink
 	
 	/**
 	 * Retrieve how much temp is lost/recovered from drinking.
-	 * @return
+	 * @return The total temperature lost from drinking.
 	 */
 	public int GetTempValue()
 	{

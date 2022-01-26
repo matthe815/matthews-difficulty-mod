@@ -13,8 +13,8 @@ public class TempHelper
 {
 	/**
 	 * Retrieve a player's temperature capability, allowing you to access any of the methods.
-	 * @param player
-	 * @return
+	 * @param player The player.
+	 * @return The temperature capability.
 	 */
     public static TemperatureCapability GetPlayer(EntityPlayer player)
     {
@@ -23,7 +23,7 @@ public class TempHelper
     
     /**
      * Return the number of ticks until the temperature updates as defined in the config.
-     * @return
+     * @return The ticks until temperature update.
      */
     public static float GetMaxUpdateTicks()
     {

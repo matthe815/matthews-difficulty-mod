@@ -19,17 +19,17 @@ public class ThirstCapability implements IThirst
     
     private Vector3d movementVec = new Vector3d();
     
-    /**Used to time the seconds passed since thirst damage was last dealt to the player*/
     private int thirstTimer;
     
-    public ThirstCapability() {
-    	thirst = new Thirst().SetThirst(20);
+    public ThirstCapability() 
+    {
+    	thirst = new Thirst().SetThirst ( 20 );
     	lastThirst = thirst;
     }
     
     public void SetPlayer (EntityPlayer player)
     {
-    	if (this.player == null) {
+    	if ( this.player == null ) {
         	this.player = player;
         	this.onSendClientUpdate();
     	}
@@ -37,28 +37,30 @@ public class ThirstCapability implements IThirst
     
     /**
      * Update the player's thirst to the provided amount.
+     * @param thirst The thirst builder.
      */
 	@Override
-	public void Set(Thirst thirst) 
+	public void Set ( Thirst thirst ) 
 	{
 		this.thirst = thirst;
 	}
 
 	/**
 	 * Retreives the player's current thirst amount.
+	 * @return The current thirst object.
 	 */
 	@Override
-	public Thirst Get() 
+	public Thirst Get () 
 	{
 		return this.thirst;
 	}
 	
 	/**
 	 * Add values to the current thirst stats.
-	 * @param thirst
+	 * @param thirst The thirst object to combine.
 	 */
 	@Override
-	public void Add(Thirst thirst) 
+	public void Add ( Thirst thirst ) 
 	{
 		this.thirst.thirst += thirst.thirst;
 		this.thirst.exhaustion += thirst.exhaustion;
@@ -70,7 +72,7 @@ public class ThirstCapability implements IThirst
 
 	/**
 	 * Remove values from the current thirst stats.
-	 * @param thirst
+	 * @param thirst The thirst object to combine.
 	 */
 	@Override
 	public void Remove(Thirst thirst) 
@@ -95,9 +97,6 @@ public class ThirstCapability implements IThirst
 		DifficultyMod.network.sendTo(new ThirstUpdatePacket(this.Get()), (EntityPlayerMP) this.player);
 	}
 	
-    /**
-     * @param phase
-     */
 	@Override
     public void OnTick ( Phase phase )
     {
@@ -165,19 +164,10 @@ public class ThirstCapability implements IThirst
         // Apply base movement penalty.
         this.Add( new Thirst ( ).SetExhaustion( ( ( player.isSprinting( ) ) ? 0.09F : 0.01F) * (float) distance * 0.01F ) );
     }
-    
-	/**
-	 * Set the player's maximum thirst to the provided amount.
-	 * @deprecated
-	 */
-	public void SetMaxThirst(int thirst)
-	{
-		return;
-	}
 	
     /**
      * @deprecated
-     * @param amount
+     * @param amount The exhausion to add
      */
     public void AddExhaustion(float amount)
     {
