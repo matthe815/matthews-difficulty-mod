@@ -118,6 +118,8 @@ public class StaminaCapability implements IStamina
 		this.stamina.extraStamina -= value.stamina;
 		else this.stamina.stamina -= value.stamina;
 		
+		this.stamina.extraStamina = Math.max(0, this.stamina.extraStamina); // Keep stamina above 0.
+		
 		this.stamina.fitness -= value.fitness;
 		
 		onSendClientUpdate();
