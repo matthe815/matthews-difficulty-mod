@@ -1,10 +1,10 @@
 # Items
 item.difficultymod.emptyFlask.name=Flask
 item.difficultymod.waterFilledFlask.name=Filled Flask
-item.difficultymod.emptycanteen.name=Empty Canteen
-item.difficultymod.emptycanteen_large.name=Empty Canteen (Large)
-item.difficultymod.filledcanteen.name=Filled Canteen
-item.difficultymod.filledcanteen_large.name=Filled Canteen (Large)
+item.difficultymod.emptySmallCanteen.name=Empty Canteen
+item.difficultymod.emptyLargeCanteen.name=Empty Canteen (Large)
+item.difficultymod.smallCanteen.name=Filled Canteen
+item.difficultymod.largeCanteen.name=Filled Canteen (Large)
 item.difficultymod.cleanFlask.name=Clean Water
 item.difficultymod.coldDrink.name=Cold Drink
 item.difficultymod.hotDrink.name=Hot Drink

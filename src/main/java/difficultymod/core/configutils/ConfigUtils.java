@@ -11,11 +11,10 @@ public class ConfigUtils
 	
 	/**
 	 * Load the thirst values from the config. (Only fires once)
-	 * @return
 	 */
 	public static void LoadItemThirst()
 	{
-		if (config_loaded)
+		if ( config_loaded )
 			return;
 		
 		String[] drinkThirst = ConfigHandler.common.thirstSettings.drinkThirst;

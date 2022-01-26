@@ -1,0 +1,28 @@
+{ 
+    "type": "minecraft:crafting_shaped",
+    "pattern":
+    [
+        "wsw",
+        "w w",
+        "   "
+    ],
+    "key":
+    {
+        "w":
+        {
+            "item": "minecraft:wool",
+            "data": 32767
+        },
+
+        "s":
+        {
+            "item": "minecraft:slime_ball"
+        }
+    },
+
+    "result": 
+    {
+      "item": "difficultymod:wet_helm",
+      "count": 1
+    }
+  }

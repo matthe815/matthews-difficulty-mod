@@ -20,8 +20,8 @@ public class CreativeTabBuilder extends CreativeTabs {
 	
 	/**
 	 * Set the rendered item in the creative-tab to a new item.
-	 * @param render
-	 * @return
+	 * @param render The item to render in the tab.
+	 * @return The tab builder.
 	 */
 	public CreativeTabBuilder setTabIcon(Item render) {
 		this.renderItem = render;

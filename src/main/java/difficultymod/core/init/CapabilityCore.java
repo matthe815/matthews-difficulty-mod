@@ -1,6 +1,5 @@
 package difficultymod.core.init;
 
-import difficultymod.capabilities.IBaseCapability;
 import difficultymod.capabilities.stamina.IStamina;
 import difficultymod.capabilities.stamina.Stamina;
 import difficultymod.capabilities.stamina.StaminaCapability;
@@ -24,7 +23,8 @@ public class CapabilityCore {
 		    {
 		        NBTTagCompound compound = new NBTTagCompound();
 		        
-		        compound.setInteger(capability.getName(), ((ThirstCapability)instance).Get().thirst);
+		        compound.setInteger("thirst", instance.Get().thirst);
+		        compound.setDouble("hydration", ((ThirstCapability)instance).Get().hydration);
 
 		        return compound;
 		    }
@@ -36,8 +36,11 @@ public class CapabilityCore {
 		        
 		        NBTTagCompound compound = (NBTTagCompound)nbt;
 		        
-		        if (compound.hasKey(capability.getName()))
-		        	((ThirstCapability)instance).Set(new Thirst().SetThirst(compound.getInteger(capability.getName())));
+		        if (compound.hasKey("thirst"))
+		        	((ThirstCapability)instance).Set(new Thirst().SetThirst(compound.getInteger("thirst")));
+		        
+		        if (compound.hasKey("hydration"))
+		        	((ThirstCapability)instance).Add(new Thirst().SetHydration(compound.getDouble("hydration")));
 		    }
 		}, ThirstCapability::new);
 		
@@ -49,6 +52,7 @@ public class CapabilityCore {
 		        NBTTagCompound compound = new NBTTagCompound();
 		        
 		        compound.setDouble(capability.getName(), ((StaminaCapability)instance).Get().stamina);
+		        compound.setFloat("fitness", instance.Get().fitness);
 
 		        return compound;
 		    }
@@ -62,6 +66,10 @@ public class CapabilityCore {
 		        
 		        if (compound.hasKey(capability.getName()))
 		        	((StaminaCapability)instance).Set(new Stamina().SetStamina(compound.getFloat(capability.getName())));
+		        
+		        if (compound.hasKey("fitness"))
+		        	((StaminaCapability)instance).Set(new Stamina().SetFitness(compound.getFloat("fitness")));
+		        	
 		    }
 		}, StaminaCapability::new);
 		

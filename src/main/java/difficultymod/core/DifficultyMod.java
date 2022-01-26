@@ -6,6 +6,8 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 
+import difficultymod.capabilities.temperature.DamageSourceHyperthermia;
+import difficultymod.capabilities.temperature.DamageSourceHypothermia;
 import difficultymod.capabilities.thirst.DamageSourceThirst;
 import difficultymod.core.init.*;
 import difficultymod.creativetabs.CreativeTabHandler;
@@ -50,7 +52,10 @@ public class DifficultyMod {
 	
 	public static HeatResistanceEnchantment heat_resistance = new HeatResistanceEnchantment();
 	public static ColdResistanceEnchantment cold_resistance = new ColdResistanceEnchantment();
+	
 	public static DamageSourceThirst SOURCE_THIRST = new DamageSourceThirst();
+	public static DamageSourceHypothermia SOURCE_HYPO = new DamageSourceHypothermia();
+	public static DamageSourceHyperthermia SOURCE_HYPER = new DamageSourceHyperthermia();
 	
 	public static SimpleNetworkWrapper network;
 	

@@ -20,8 +20,8 @@ public class ThirstHelper
 	
 	/**
 	 * Retrieve a player's thirst capability, allowing you to access any of the methods.
-	 * @param player
-	 * @return
+	 * @param player The player.
+ 	 * @return The thirst capability.
 	 */
     public static ThirstCapability GetPlayer(EntityPlayer player)
     {
@@ -30,7 +30,7 @@ public class ThirstHelper
     
     /**
      * Register a set of items as drinks.
-     * @param Drink list
+     * @param items Drink list
      */
     public static void RegisterDrinks(Item[] items)
     {
@@ -40,7 +40,7 @@ public class ThirstHelper
     
     /**
      * Register a new drink into the system, with effects to be applied upon drinking.
-     * @param drink
+     * @param drink The drink to register.
      */
     public static void RegisterDrink(Drink drink)
     {
@@ -49,17 +49,17 @@ public class ThirstHelper
     
     /**
      * Obtain an array of all of the currently registered drinks.
-     * @return
+     * @return The drink object list.
      */
-    public static Drink[] GetDrinks()
+    public static Drink [ ] GetDrinks ()
     {
     	return registered_drinks.toArray(new Drink[0]);
     }
     
     /**
      * Grab the data of a currently loaded drink.
-     * @param location
-     * @return
+     * @param location The resource location of the drink.
+     * @return The drink object.
      */
     public static Drink GetDrink(ResourceLocation location)
     {

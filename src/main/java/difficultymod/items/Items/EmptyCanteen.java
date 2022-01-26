@@ -1,11 +1,11 @@
 package difficultymod.items.Items;
 
+import difficultymod.core.init.Items;
 import difficultymod.creativetabs.CreativeTabHandler;
 import difficultymod.items.BaseItemBucket;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
@@ -21,7 +21,7 @@ public class EmptyCanteen extends BaseItemBucket
 	
 	public EmptyCanteen() 
 	{
-		super("emptycanteen", CreativeTabHandler.DifficultyModTab);
+		super("emptySmallCanteen", CreativeTabHandler.DifficultyModTab);
 	}
 	
 	@Override
@@ -45,6 +45,6 @@ public class EmptyCanteen extends BaseItemBucket
 		playerIn.playSound(new SoundEvent(new ResourceLocation("minecraft:item.bottle.fill")), 1f, 1f);
 		
 		super.onItemRightClick(worldIn, playerIn, handIn);
-		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, new ItemStack(Item.getByNameOrId("difficultymod:canteen1")));
+		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, new ItemStack(Items.CANTEEN));
 	}
 }

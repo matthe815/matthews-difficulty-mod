@@ -1,7 +1,9 @@
 package difficultymod.capabilities.stamina;
 
+import difficultymod.api.capability.CapabilityHelper;
 import difficultymod.api.stamina.ActionType;
 import difficultymod.api.stamina.StaminaHelper;
+import difficultymod.capabilities.thirst.IThirst;
 import difficultymod.capabilities.thirst.ThirstCapability;
 import difficultymod.capabilities.thirst.ThirstProvider;
 import difficultymod.core.ConfigHandler;
@@ -20,6 +22,8 @@ public class StaminaCapability implements IStamina
 	private Stamina stamina = new Stamina().SetStamina(100);
 	private float lastStamina = 0;
 	
+	private int staminaRechargeTick = 0;
+	
 	private EntityPlayer player;
 	
 	public static float[] regenRates = new float[] {0, 0, 0, 0, 0, 0, 0, 0, 0.01F, 0.05F, 0.07F, 0.1F, 0.12F, 0.13F, 0.15F, 0.17F, 0.19F, 0.20F, 0.22F, 0.25F, 0.30F};
@@ -28,55 +32,95 @@ public class StaminaCapability implements IStamina
 	public StaminaCapability() {}
 	
 	/**
-	 * Get the stamina regeneration rate.
+	 * Get the stamina regeneration rate, calculated by total thirst and difficulty.
+	 * @return Current regeneration rate.
 	 */
-	public float GetRegenerationRate() 
+	public float GetRegenerationRate () 
 	{
 		// If thirst is disabled, set it to null.
-		ThirstCapability thirst = ConfigHandler.common.thirstSettings.disableThirst ? (ThirstCapability)player.getCapability(ThirstProvider.THIRST, null) : null;
+		IThirst thirst = CapabilityHelper.GetThirst ( this.player );
 				
-		float regenRate = 0.33f; // Base regen rate.
-		boolean stamina = player.getActivePotionEffect(PotionInit.STAMINA) != null ? true : false; // Double-stamina regeneration potion.	
+		float regenRate = 0.33f; // Base regen rate for if the scaling amount fails.
 		
-		if (thirst != null && (int)thirst.Get().thirst < regenRates.length)
-			regenRate = stamina ? StaminaCapability.regenRates[(int)thirst.Get().thirst]*2 : StaminaCapability.regenRates[(int)thirst.Get().thirst];	
+		if ( ( int ) thirst.Get().thirst < regenRates.length ) // Error evaluation, incase thirst is higher than max.
+			regenRate = StaminaCapability.regenRates[(int)thirst.Get().thirst];	
 				
-		return player.world.getDifficulty()==EnumDifficulty.PEACEFUL ? regenRate*2 : regenRate;
+		return player.world.getDifficulty()==EnumDifficulty.PEACEFUL ? regenRate*2 : regenRate; // Double the regen rate in peaceful and return it.
 	}
 
     /**
-     * Set the player's current stamina.
+     * Set the player's current stamina to the supplied parameter, erasing past values.
+     * @param stamina The desired stamina builder object.
      */
 	@Override
-	public void Set(Stamina stamina) 
+	public void Set ( Stamina stamina ) 
 	{
 		this.stamina = stamina;
 	}
 
 	/**
 	 * Get the player's current stamina.
+	 * @return The current running total of the player.
 	 */
 	@Override
-	public Stamina Get() 
+	public Stamina Get () 
 	{
 		return stamina;
 	}
 	
+	/**
+	 * Add the supplied stamina object into the current stamina object, turning into extra stamina when capping.
+	 * @param value The desired stamina builder.
+	 */
 	@Override
 	public void Add(Stamina value) 
 	{
+		float untilMax = stamina.GetMaxStamina(this.player) - stamina.stamina;
+		stamina.stamina += Math.min(value.stamina, untilMax);
+		value.stamina -= untilMax;
+		
+		if (value.stamina > 0) stamina.extraStamina += value.stamina;
+		this.stamina.fitness += value.fitness;
+		
+		onSendClientUpdate();
+	}
+	
+	/**
+	 * Add the supplied stamina object directly into the player stamina, ignoring extra stamina.
+	 * The current stamina outside of extra-stamina is reset to the cap every frame.
+	 * @param value The desired stamina builder.
+	 */
+	public void AddDirect(Stamina value) 
+	{
 		stamina.stamina += value.stamina;
+	
+		onSendClientUpdate();
+	}
+	
+	/**
+	 * Return the current waiting tick for waiting for stamina to recharge.
+	 * @return The current wait tick.
+	 */
+	public int GetStaminaHoldTick ()
+	{
+		return this.staminaRechargeTick;
 	}
 
+	/**
+	 * Remove stamina from the current stamina pool using a supplied stamina builder object.
+	 * @param value The desired stamina builder.
+	 */
 	@Override
 	public void Remove(Stamina value) 
-	{
-		if (ConfigHandler.Debug_Options.showUpdateMessages) {
-			System.out.println("Removing " + value.stamina);
-			System.out.println(this.stamina.stamina);	
-		}
+	{		
+		// Use extra stamina for main stamina.
+		if (this.stamina.extraStamina > 0)
+		this.stamina.extraStamina -= value.stamina;
+		else this.stamina.stamina -= value.stamina;
 		
-		this.stamina.stamina -= value.stamina;
+		this.stamina.fitness -= value.fitness;
+		
+		onSendClientUpdate();
 	}
 	
 	public void SetPlayer (EntityPlayer player)
@@ -86,16 +130,23 @@ public class StaminaCapability implements IStamina
 	
 	/**
 	 * Fire an action, returning whether or not the action was successful.
+	 * @param action A string-based action type.
+	 * @param defStamina The default stamina for an action.
+	 * @return Whether or not the action was successful.
 	 */
 	public boolean FireAction(String action, float defStamina) 
 	{
+		if (this.player == null || this.player.isCreative()) // Creative bypass.
+			return true;
+		
 		float requiredStamina = StaminaHelper.GetUsage(action) != 0 ? StaminaHelper.GetUsage(action) : defStamina;
 
-		//if (player.getActivePotionEffect(PotionInit.STAMINALESS)!=null) // Stop right here if the player has Staminaless.
-		//	return true;
+		if ( player.getActivePotionEffect ( PotionInit.STAMINALESS ) != null ) // Stop right here if the player has Staminaless.
+			return true;
 		
-		if (this.stamina.stamina >= requiredStamina) {
-			this.stamina.stamina-=requiredStamina;
+		if ( this.stamina.stamina >= requiredStamina ) {
+			this.Remove(new Stamina ().SetStamina ( requiredStamina ).SetFitness( - ( requiredStamina / 170 ) ) );
+			staminaRechargeTick = 40;
 			return true;
 		}
 		
@@ -110,14 +161,6 @@ public class StaminaCapability implements IStamina
 		return FireAction(action.toString().toLowerCase(), defStamina);
 	}
 
-	/**
-	 * Fire an action, returning whether or not the action was successful.
-	 * @deprecated
-	 */
-	public boolean FireAction(ActionType action, EntityPlayer player, float defStamina) {
-		return FireAction(action.toString().toLowerCase(), defStamina);
-	}
-
 	@Override
 	public void OnTick(Phase phase) 
 	{
@@ -128,7 +171,7 @@ public class StaminaCapability implements IStamina
 		if (ConfigHandler.common.staminaSettings.disableStamina || (ConfigHandler.common.staminaSettings.disableStaminaDuringPeaceful && player.world.getDifficulty() == EnumDifficulty.PEACEFUL))
 			return;
 		
-		if (player.isSprinting() && !player.isCreative())
+		if (player.isSprinting())
 		{
 			if (!FireAction(ActionType.RUNNING, 0.33f)) // If running fails to occur, cancel running.
 			{
@@ -137,20 +180,22 @@ public class StaminaCapability implements IStamina
 			
 			return; // Halt stamina regeneration process if running.
 		}
+		
+		this.staminaRechargeTick --; // Wait for the stamina recharge tick.
+		if (this.staminaRechargeTick > 0) return;
 
 		this.stamina.stamina = Math.min(this.stamina.stamina, this.stamina.GetMaxStamina(player)); // Prevent stamina from exceeding max.
-		this.Add(new Stamina().SetStamina(this.GetRegenerationRate()));
+		this.AddDirect( new Stamina( ).SetStamina( this.GetRegenerationRate() * 1.5f ) );
 	}
 
 	public boolean HasChanged() 
 	{
 		return lastStamina != Get().stamina;
 	}
-
+	
 	public void onSendClientUpdate() 
 	{
-		lastStamina = stamina.stamina;
-		DifficultyMod.network.sendTo(new StaminaUpdatePacket(Get()), (EntityPlayerMP)player);
+		DifficultyMod.network.sendTo(new StaminaUpdatePacket(Get()), (EntityPlayerMP) player);
 	}
 
 }

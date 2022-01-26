@@ -1,0 +1,20 @@
+{ 
+    "type": "minecraft:crafting_shapeless",
+    "ingredients":
+    [
+        {
+            "item": "minecraft:potion",
+      		"potion": "minecraft:water"
+        },
+        
+        {
+            "item": "minecraft:ice"
+        }
+    ],
+
+    "result": 
+    {
+      "item": "difficultymod:flask_with_cold_water",
+      "count": 1
+    }
+  }

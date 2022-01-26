@@ -1,8 +1,8 @@
 package difficultymod.items.Items;
 
+import difficultymod.core.DifficultyMod;
 import difficultymod.items.BasePotion;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.DamageSource;
 
 public class PotionHypoThermia extends BasePotion {
 	
@@ -13,7 +13,7 @@ public class PotionHypoThermia extends BasePotion {
     @Override
     public void performEffect(EntityLivingBase entity, int amplifier)
     {
-		entity.attackEntityFrom(DamageSource.MAGIC, 1);
+		entity.attackEntityFrom(DifficultyMod.SOURCE_HYPO, 1f * amplifier);
     }
     
     @Override
