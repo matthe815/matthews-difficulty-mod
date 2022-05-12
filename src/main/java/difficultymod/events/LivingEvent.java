@@ -133,11 +133,14 @@ public class LivingEvent {
 		StaminaCapability stamina = (StaminaCapability) player.getCapability(StaminaProvider.STAMINA, null);
 		stamina.SetPlayer(player);
 		
+		if (player.isCreative() || ConfigHandler.common.staminaSettings.disableStamina)
+			return;
+		
         /* Stop the player from jumping in the case that they have no stamina. */
         if (!stamina.FireAction(ActionType.JUMPING, 15f))
             player.motionY = 0.0;
         
-		if (player.world.isRemote || player.isCreative() || ConfigHandler.common.staminaSettings.disableStamina)
+		if (player.world.isRemote)
 			return;
 		
         ThirstCapability thirstStats = (ThirstCapability) player.getCapability(ThirstProvider.THIRST, null);
